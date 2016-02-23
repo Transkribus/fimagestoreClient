@@ -4,6 +4,9 @@
 	<groupId>org.dea</groupId>
 	<artifactId>fimagestoreClient</artifactId>
 	<version>0.1</version>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<repositories>
 		<!-- dea artifactory: -->		
 		<repository>
