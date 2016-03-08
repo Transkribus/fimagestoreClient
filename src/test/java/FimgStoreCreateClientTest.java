@@ -20,8 +20,7 @@ public class FimgStoreCreateClientTest {
 	static FimgStoreUriBuilder uriBuilder = fisc.getUriBuilder();
 	
 	public static void testCreateBlackenedImage(String user, String pw) {
-		
-		FimgStoreCreateClient fiscPo = new FimgStoreCreateClient(Scheme.https, "dbis-thure.uibk.ac.at", "fimagestoreTrp", user, pw);
+		FimgStoreCreateClient fiscCr = new FimgStoreCreateClient(Scheme.https, "dbis-thure.uibk.ac.at", "fimagestoreTrp", user, pw);
 		
 		final String testImgKey = "WIVJRXZOGQWBYOGAOGRRXKWZ";
 		
@@ -47,11 +46,11 @@ public class FimgStoreCreateClientTest {
 //			URI createUri = uriBuilder.getCreateUri(getUri, "newIsPartOf", 10, null);
 //			System.out.println("create uri: "+createUri.toString());
 			
-			String key = fiscPo.createFile(getUri, "newIsPartOf", 10, null);
+			String key = fiscCr.createFile(getUri, "newIsPartOf", 10, null);
 						
 			System.out.println("created new file with key = "+key);
 			
-			String key2 = fiscPo.createBlackenedImage(testImgKey, "newIsPartOf2", 10, null, polygonPts1, polygonPts2);
+			String key2 = fiscCr.createBlackenedImage(testImgKey, "newIsPartOf2", 10, null, polygonPts1, polygonPts2);
 			System.out.println("created blackened image key = "+key2);
 		} catch (Exception e) {
 			e.printStackTrace();
