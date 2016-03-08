@@ -25,6 +25,8 @@ public class FimgStoreUriBuilder {
 	private static String getActionPath;
 	private static String putActionPath;
 	private static String delActionPath;
+	private static String createActionPath;
+	
 	private String serverContext;
 	private URIBuilder uriBuilder;
 	
@@ -46,6 +48,7 @@ public class FimgStoreUriBuilder {
 		getActionPath = this.serverContext + FimgStoreConstants.GET_ACTION_PATH;
 		putActionPath = this.serverContext + FimgStoreConstants.PUT_ACTION_PATH;
 		delActionPath = this.serverContext + FimgStoreConstants.DEL_ACTION_PATH;
+		createActionPath = this.serverContext + FimgStoreConstants.CREATE_ACTION_PATH;
 		this.uriBuilder = new URIBuilder().setScheme(scheme).setHost(host);
 		if(port != null && port != 80 && port != 443){
 			this.uriBuilder.setPort(port);
@@ -77,6 +80,29 @@ public class FimgStoreUriBuilder {
 		return buildURI(imgKey, param);
 	}
 	
+	public URI getCreateUri(URI baseGetUri, String isPartOf, Integer timeout, String replaceKey) throws IllegalArgumentException {				
+		uriBuilder.clearParameters().setPath(createActionPath).setParameters(new URIBuilder(baseGetUri).getQueryParams());
+
+		if (isPartOf != null && !isPartOf.isEmpty())
+			uriBuilder.setParameter(FimgStoreConstants.PART_OF_VAR_NAME, isPartOf);
+			
+		if (timeout!=null && timeout>0)
+			uriBuilder.setParameter(FimgStoreConstants.TIMEOUT_PARAM, ""+timeout);
+		
+		if (replaceKey!=null && !replaceKey.isEmpty())
+			uriBuilder.setParameter(FimgStoreConstants.REPLACE_ID_VAR_NAME, replaceKey);
+		
+		URI uri;
+		try {
+			uri = uriBuilder.build();
+		} catch(URISyntaxException e){
+			throw new IllegalArgumentException("Fimagestore create URL could not be build: "+e.getMessage(), e);
+		}		
+		
+		return uri;
+		
+	}
+		
 	/**
 	 * Returns the image with the specified key, drawing a black filled 
 	 * polygon over it as specified by polygonPts
@@ -93,6 +119,7 @@ public class FimgStoreUriBuilder {
 		
 			String ptsStr = OtherUtils.pointsToString(polygonPts);
 			convertOpts += " -draw 'polygon "+ptsStr+"'";
+//			convertOpts += " -draw 'polygon whatever'"; // TEST: corrupt convert opts
 		}
 		
 		logger.debug("convertOpts = "+convertOpts);
@@ -278,7 +305,7 @@ public class FimgStoreUriBuilder {
 		
 		return uri;
 	}
-	
+		
 	public URI getDeleteUri(String fileKey){
 		URI uri = null;
 

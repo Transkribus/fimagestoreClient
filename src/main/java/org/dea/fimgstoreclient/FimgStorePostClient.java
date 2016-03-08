@@ -2,6 +2,7 @@ package org.dea.fimgstoreclient;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.http.auth.AuthenticationException;
@@ -13,10 +14,10 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.dea.fimgstoreclient.responsehandler.FimgStoreUploadResponseHandler;
 import org.dea.fimgstoreclient.utils.MimeTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Client for posting stuff to the fimagestore.
@@ -28,9 +29,6 @@ import org.dea.fimgstoreclient.utils.MimeTypes;
  */
 public class FimgStorePostClient extends AbstractClient {
 	private static final Logger logger = LoggerFactory.getLogger(FimgStorePostClient.class);
-	protected final static String PART_OF_VAR_NAME = FimgStoreConstants.getString("partOfVarName");
-	protected final static String FILE_VAR_NAME = FimgStoreConstants.getString("fileVarName");
-	protected final static String REPLACE_ID_VAR_NAME = FimgStoreConstants.getString("replaceIdVarName");
 
 	public FimgStorePostClient(Scheme scheme, String host, String serverContext,
 			String username, String password) {
@@ -41,7 +39,6 @@ public class FimgStorePostClient extends AbstractClient {
 			String username, String password) {
 		super(scheme, host, port, serverContext, username, password);
 	}
-
 	
 	/**
 	 * post a file to the image store and get the retrieval key
@@ -144,17 +141,17 @@ public class FimgStorePostClient extends AbstractClient {
 		// add is_part_of:
 		if(isPartOf != null){
 			final StringBody stringBody = new StringBody(isPartOf, ContentType.TEXT_PLAIN);
-			entBuilder.addPart(PART_OF_VAR_NAME, stringBody);
+			entBuilder.addPart(FimgStoreConstants.PART_OF_VAR_NAME, stringBody);
 		}
 		
 		if(key != null){
 			// replace file. set parameter...
 			final StringBody stringBody = new StringBody(key, ContentType.TEXT_PLAIN);
-			entBuilder.addPart(REPLACE_ID_VAR_NAME, stringBody);
+			entBuilder.addPart(FimgStoreConstants.REPLACE_ID_VAR_NAME, stringBody);
 		}
 		
 		// add content
-		entBuilder.addPart(FILE_VAR_NAME, body);
+		entBuilder.addPart(FimgStoreConstants.FILE_VAR_NAME, body);
 
 		// post stuff and get the file key
 		ResponseHandler<String> responseHandler = new FimgStoreUploadResponseHandler();
@@ -187,7 +184,7 @@ public class FimgStorePostClient extends AbstractClient {
 		
 		return response;
 	}
-	
+
 	private ContentType getContentType(final String fileName) throws IOException {
 		final String extension = FilenameUtils.getExtension(fileName);
 		final String mimeType = MimeTypes.getMimeType(extension);

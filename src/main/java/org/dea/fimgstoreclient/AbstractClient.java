@@ -42,7 +42,7 @@ public abstract class AbstractClient {
 	protected Scheme scheme;
 	protected FimgStoreUriBuilder uriBuilder;
 	
-	private Credentials creds = null;
+	protected Credentials creds = null;
 	
 //	private AuthCache authCache = new BasicAuthCache();
 	private AuthScope scope = null;

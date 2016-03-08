@@ -18,9 +18,15 @@ public class FimgStoreConstants {
 		public static final String CONVERT_EXT_PARAM = "convertExt";
 		public static final String MD_FILETYPE_VALUE = "metadata";
 		public static final String ID_PARAM = "id";
+		public static final String PART_OF_VAR_NAME = FimgStoreConstants.getString("partOfVarName")!=null ? FimgStoreConstants.getString("partOfVarName") : "is_part_of";
+		public static final String FILE_VAR_NAME = FimgStoreConstants.getString("fileVarName")!=null ? FimgStoreConstants.getString("fileVarName") : "file";
+		public static final String REPLACE_ID_VAR_NAME = FimgStoreConstants.getString("replaceIdVarName")!=null ? FimgStoreConstants.getString("replaceIdVarName") : "replaceId";
+		public static final String TIMEOUT_PARAM = FimgStoreConstants.getString("timeoutParam")!=null ? FimgStoreConstants.getString("timeoutParam") : "timeout";		
+
 		public static final String GET_ACTION_PATH = getString("getActionPath");
 		public static final String PUT_ACTION_PATH = getString("putActionPath");
 		public static final String DEL_ACTION_PATH = getString("delActionPath");
+		public static final String CREATE_ACTION_PATH = getString("createActionPath");
 		
 		public static String getString(String name){
 			return props.getProperty(name);
