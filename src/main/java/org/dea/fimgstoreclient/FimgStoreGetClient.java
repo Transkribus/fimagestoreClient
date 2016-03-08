@@ -1,5 +1,6 @@
 package org.dea.fimgstoreclient;
 
+import java.awt.Point;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,9 +9,12 @@ import java.io.InputStream;
 import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URL;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -128,6 +132,11 @@ public class FimgStoreGetClient extends AbstractClient {
 		img.setImgType(type);
 
 		return img;
+	}
+	
+	public FimgStoreImg getImgBlackened(String imgKey, List<Point> ...polygonPtsList) throws IOException {
+		URI uri = uriBuilder.getImgBlackenedUri(imgKey, polygonPtsList);
+		return (FimgStoreImg) getImg(imgKey, uri);
 	}
 
 	/**
@@ -394,6 +403,19 @@ public class FimgStoreGetClient extends AbstractClient {
 			response.close();
 		}
 		return file;
+	}
+	
+	public File saveFile(byte[] data, String path, String fileName)
+			throws IllegalArgumentException, IOException {
+		if (path==null)
+			path=".";
+		if (fileName==null || fileName.isEmpty())
+			throw new IllegalArgumentException("invalid fileName: "+fileName);
+		
+		File outFile = new File(path+"/"+fileName);
+		
+		FileUtils.writeByteArrayToFile(outFile, data);
+		return outFile;
 	}
 
 	/*******************

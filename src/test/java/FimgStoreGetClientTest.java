@@ -1,23 +1,29 @@
+import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.dea.fimgstoreclient.FimgStoreGetClient;
 import org.dea.fimgstoreclient.beans.FimgStoreImg;
 import org.dea.fimgstoreclient.beans.ImgType;
 import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
+import org.dea.fimgstoreclient.utils.ImagePanel;
 
 public class FimgStoreGetClientTest {
-
-	public static void main(String[] args) {
+	
+	static FimgStoreGetClient fisc = new FimgStoreGetClient("dbis-thure.uibk.ac.at", "fimagestoreTrp");
+	static FimgStoreUriBuilder uriBuilder = fisc.getUriBuilder();
+	
+	public static void testDownloadAndMetadata() {
 		final String testImgKey = "DYQLMRPHLXBKCQFRXBMKXRTF";
-		FimgStoreGetClient fisc = new FimgStoreGetClient("dbis-thure.uibk.ac.at", "fimagestore");
 
 		FimgStoreImg result = null;
 		File download = null;
 
 		try {
-			final URI uri = (new FimgStoreUriBuilder("https", "dbis-thure.uibk.ac.at", null, "/fimagestore")).getFileUri(testImgKey);
+			URI uri = uriBuilder.getFileUri(testImgKey);
 			System.out.println("UriBuilder test: " + uri.toString());
 			download = fisc.saveFile(uri, "/tmp/"); //TODO get stream here rather than having client save stuff
 			result = fisc.getImg(testImgKey, ImgType.view);
@@ -38,6 +44,44 @@ public class FimgStoreGetClientTest {
 		}
 		
 		System.out.println(result.toString());
-		System.out.println(download.getAbsolutePath());		
+		System.out.println(download.getAbsolutePath());	
+	}
+	
+	public static void testBlackeningImage() {
+		final String testImgKey = "WIVJRXZOGQWBYOGAOGRRXKWZ";
+		
+		FimgStoreImg result = null;
+		File download = null;
+		List<Point> polygonPts1 = new ArrayList<>();
+		polygonPts1.add(new Point(1908, 189));
+		polygonPts1.add(new Point(2462, 189));
+		polygonPts1.add(new Point(2462, 418));
+		polygonPts1.add(new Point(1908, 418));
+		
+		List<Point> polygonPts2 = new ArrayList<>();
+		polygonPts2.add(new Point(100, 100));
+		polygonPts2.add(new Point(200, 50));
+		polygonPts2.add(new Point(300, 100));
+		polygonPts2.add(new Point(200, 150));
+		polygonPts2.add(new Point(100, 100));
+
+		try {
+			URI uri = uriBuilder.getImgBlackenedUri(testImgKey, polygonPts1, polygonPts2);
+			System.out.println("blacken uri: " + uri.toString());
+			download = fisc.saveFile(uri, "/tmp/"); //TODO get stream here rather than having client save stuff
+			System.out.println("stored blacked image at: "+download.getAbsolutePath());
+			
+//			ImagePanel.showImage(download.getAbsolutePath());
+//			result = fisc.getImg(testImgKey, ImgType.view);
+		} catch (IllegalArgumentException | IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	public static void main(String[] args) {
+		testBlackeningImage();
+
+//		testDownloadAndMetadata();	
 	}
 }

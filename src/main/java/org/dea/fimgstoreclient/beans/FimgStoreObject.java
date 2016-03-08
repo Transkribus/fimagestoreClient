@@ -54,8 +54,7 @@ public abstract class FimgStoreObject implements Serializable{
 
 	public void setUri(URI uri) {
 		this.uri = uri;
-	}
-	
+	}	
 	
 //	@Override
 //	public String toString(){

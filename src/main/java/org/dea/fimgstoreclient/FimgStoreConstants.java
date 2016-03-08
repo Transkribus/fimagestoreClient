@@ -14,7 +14,7 @@ public class FimgStoreConstants {
 		public static final String SCALE_X_Y_PARAM = "scaleXY";
 		public static final String MULT_LITERAL = "x";
 		public static final String CROP_PARAM = "crop";
-		public static final String CONVERT_OPS_PARAM = "convertOps";
+		public static final String CONVERT_OPTS_PARAM = "convertOpts";
 		public static final String CONVERT_EXT_PARAM = "convertExt";
 		public static final String MD_FILETYPE_VALUE = "metadata";
 		public static final String ID_PARAM = "id";

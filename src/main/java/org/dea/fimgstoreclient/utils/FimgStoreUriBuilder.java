@@ -1,5 +1,6 @@
 package org.dea.fimgstoreclient.utils;
 
+import java.awt.Point;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -13,6 +14,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.dea.fimgstoreclient.FimgStoreConstants;
 import org.dea.fimgstoreclient.beans.ImgType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FimgStoreUriBuilder {
 	
@@ -24,6 +27,8 @@ public class FimgStoreUriBuilder {
 	private static String delActionPath;
 	private String serverContext;
 	private URIBuilder uriBuilder;
+	
+	private final static Logger logger = LoggerFactory.getLogger(FimgStoreUriBuilder.class);
 	
 	/**
 	 * Empty Constructor uses HTTPS and hostname, context and paths from fimgstoreclient.properties
@@ -69,6 +74,30 @@ public class FimgStoreUriBuilder {
 
 		NameValuePair param = new BasicNameValuePair(FimgStoreConstants.FILE_TYPE_PARAM, type.toString());
 
+		return buildURI(imgKey, param);
+	}
+	
+	/**
+	 * Returns the image with the specified key, drawing a black filled 
+	 * polygon over it as specified by polygonPts
+	 */
+	@SafeVarargs
+	public final URI getImgBlackenedUri(final String imgKey, List<Point> ...polygonPtsList)
+			throws IllegalArgumentException {
+		
+		String convertOpts =  "-fill black";
+		
+		for (List<Point> polygonPts : polygonPtsList) {
+			if (polygonPts== null || polygonPts.size() < 3)
+				throw new IllegalArgumentException("Polygon is null or has less than 3 points!");
+		
+			String ptsStr = OtherUtils.pointsToString(polygonPts);
+			convertOpts += " -draw 'polygon "+ptsStr+"'";
+		}
+		
+		logger.debug("convertOpts = "+convertOpts);
+
+		NameValuePair param = new BasicNameValuePair(FimgStoreConstants.CONVERT_OPTS_PARAM, convertOpts);
 		return buildURI(imgKey, param);
 	}
 
@@ -167,7 +196,7 @@ public class FimgStoreUriBuilder {
 	 */
 	public URI getImgConvUri(final String imgKey, final String convertOps,
 			final String convertExt) throws IllegalArgumentException {
-		NameValuePair ops = new BasicNameValuePair(FimgStoreConstants.CONVERT_OPS_PARAM, convertOps);
+		NameValuePair ops = new BasicNameValuePair(FimgStoreConstants.CONVERT_OPTS_PARAM, convertOps);
 		NameValuePair ext = new BasicNameValuePair(FimgStoreConstants.CONVERT_EXT_PARAM, convertExt);
 
 		return buildURI(imgKey, ops, ext);
