@@ -1,3 +1,4 @@
+package org.dea.fimgstoreclient;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
@@ -9,47 +10,49 @@ import org.dea.fimgstoreclient.FimgStoreGetClient;
 import org.dea.fimgstoreclient.beans.FimgStoreImg;
 import org.dea.fimgstoreclient.beans.ImgType;
 import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
-import org.dea.fimgstoreclient.utils.ImagePanel;
+import org.junit.Test;
 
 public class FimgStoreGetClientTest {
 	
 	static FimgStoreGetClient fisc = new FimgStoreGetClient("dbis-thure.uibk.ac.at", "fimagestoreTrp");
 	static FimgStoreUriBuilder uriBuilder = fisc.getUriBuilder();
 	
-	public static void testDownloadAndMetadata() {
-		final String testImgKey = "DYQLMRPHLXBKCQFRXBMKXRTF";
+	static String TMP_DIR = System.getProperty("java.io.tmpdir");
+	
+	final String testImgKey = "WIVJRXZOGQWBYOGAOGRRXKWZ";
+	
+	@Test public void testDownloadAndMetadata() throws IllegalArgumentException, IOException {
+//		final String testImgKey = "WIVJRXZOGQWBYOGAOGRRXKWZ";
 
 		FimgStoreImg result = null;
 		File download = null;
 
-		try {
+//		try {
 			URI uri = uriBuilder.getFileUri(testImgKey);
 			System.out.println("UriBuilder test: " + uri.toString());
-			download = fisc.saveFile(uri, "/tmp/"); //TODO get stream here rather than having client save stuff
+			download = fisc.saveFile(uri, TMP_DIR); //TODO get stream here rather than having client save stuff
 			result = fisc.getImg(testImgKey, ImgType.view);
-		} catch (IllegalArgumentException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		} catch (IllegalArgumentException | IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		// image metadata testing:
-		try {
+//		try {
 			System.out.println(fisc.getFileMd(testImgKey));
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		} catch (IllegalArgumentException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		System.out.println(result.toString());
 		System.out.println(download.getAbsolutePath());	
 	}
 	
-	public static void testBlackeningImage() {
-		final String testImgKey = "WIVJRXZOGQWBYOGAOGRRXKWZ";
-		
+	@Test public void testBlackeningImage() throws IllegalArgumentException, IOException {
 		FimgStoreImg result = null;
 		File download = null;
 		List<Point> polygonPts1 = new ArrayList<>();
@@ -65,22 +68,23 @@ public class FimgStoreGetClientTest {
 		polygonPts2.add(new Point(200, 150));
 		polygonPts2.add(new Point(100, 100));
 
-		try {
+//		try {
 			URI uri = uriBuilder.getImgBlackenedUri(testImgKey, polygonPts1, polygonPts2);
 			System.out.println("blacken uri: " + uri.toString());
-			download = fisc.saveFile(uri, "/tmp/"); //TODO get stream here rather than having client save stuff
+			download = fisc.saveFile(uri, TMP_DIR); //TODO get stream here rather than having client save stuff
 			System.out.println("stored blacked image at: "+download.getAbsolutePath());
 			
 //			ImagePanel.showImage(download.getAbsolutePath());
 //			result = fisc.getImg(testImgKey, ImgType.view);
-		} catch (IllegalArgumentException | IOException e) {
-			e.printStackTrace();
-		}
+//		} catch (IllegalArgumentException | IOException e) {
+//			e.printStackTrace();
+//		}
 		
 	}
 
-	public static void main(String[] args) {
-		testBlackeningImage();
+	public static void main(String[] args) throws Exception {
+		FimgStoreGetClientTest t = new FimgStoreGetClientTest();
+		t.testBlackeningImage();
 
 //		testDownloadAndMetadata();	
 	}

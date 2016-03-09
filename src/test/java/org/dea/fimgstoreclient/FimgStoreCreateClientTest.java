@@ -1,3 +1,4 @@
+package org.dea.fimgstoreclient;
 import java.awt.Point;
 import java.io.File;
 import java.net.URI;
