@@ -88,6 +88,15 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+			      <systemPropertyVariables>
+			        <java.net.useSystemProxies>true</java.net.useSystemProxies>
+			      </systemPropertyVariables>
+ 				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
