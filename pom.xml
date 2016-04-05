@@ -15,6 +15,13 @@
 			<url>http://dbis-halvar.uibk.ac.at/artifactory/libs-release/</url>
 		</repository>
 	</repositories>
+	<distributionManagement>
+	    <repository>
+	        <id>dbis-halvar-artifactory</id>
+	        <name>dbis-halvar-releases</name>
+	        <url>http://dbis-halvar.uibk.ac.at/artifactory/libs-release-local</url>
+	    </repository>
+	</distributionManagement>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -87,15 +94,6 @@
 					<source>1.7</source>
 					<target>1.7</target>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-			      <systemPropertyVariables>
-			        <java.net.useSystemProxies>true</java.net.useSystemProxies>
-			      </systemPropertyVariables>
- 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
