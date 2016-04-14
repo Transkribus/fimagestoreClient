@@ -7,6 +7,7 @@ import java.net.URL;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.Credentials;
@@ -99,6 +100,9 @@ public abstract class AbstractClient {
 		builder = HttpClients.custom().setConnectionManager(cm);
 		builder.setUserAgent(userAgent);
 
+		// FIXME -- check http/https proxy settings (user/pw/ authentication strategy)
+		builder.setProxy(new HttpHost(System.getProperty("https.proxyHost"), Integer.parseInt(System.getProperty("https.proxyPort"))));
+		
 		context = HttpClientContext.create();
 		this.scheme = scheme;
 		this.host = host;
