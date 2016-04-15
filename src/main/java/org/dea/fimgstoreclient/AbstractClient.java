@@ -2,6 +2,7 @@ package org.dea.fimgstoreclient;
 
 import java.io.IOException;
 import java.net.ProtocolException;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URL;
 
@@ -11,6 +12,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.Credentials;
+import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.ResponseHandler;
@@ -23,10 +25,12 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
+import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
 
 public abstract class AbstractClient {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractClient.class);
@@ -96,12 +100,33 @@ public abstract class AbstractClient {
 
 	protected void initialize(final Scheme scheme, final String host, final Integer port, final String serverContext, Credentials creds) {
 		uriBuilder = new FimgStoreUriBuilder(scheme.toString(), host, port, serverContext);
-		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-		builder = HttpClients.custom().setConnectionManager(cm);
+//		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+//		builder = HttpClients.custom().setConnectionManager(cm);
+		builder = HttpClients.custom().useSystemProperties();
 		builder.setUserAgent(userAgent);
 
 		// FIXME -- check http/https proxy settings (user/pw/ authentication strategy)
-		builder.setProxy(new HttpHost(System.getProperty("https.proxyHost"), Integer.parseInt(System.getProperty("https.proxyPort"))));
+//		final String proxy = System.getProperty(scheme.toString() + ".proxyHost");
+//		final int proxyPort = Integer.parseInt(System.getProperty(scheme.toString() + ".proxyPort"));
+//		final String proxyUser = System.getProperty(scheme.toString() + ".proxyUser");
+//		final String proxyPassword = System.getProperty(scheme.toString() + ".proxyPassword");
+//		setProxy(host, port, user, password, localMachineName, domainName);
+//		builder.
+		
+		/*
+		 * String proxyHost = ...;
+			int proxyPort = ...;
+			String proxyUsername = ...;
+			String proxyPassword = ...;
+			
+			final HttpHost hcProxyHost = new HttpHost(proxyHost, proxyPort, "http");
+			httpclient.getCredentialsProvider().setCredentials(
+			                        new AuthScope(proxyHost, proxyPort),
+			                        new UsernamePasswordCredentials(proxyUsername,
+			new String(proxyPassword)));
+			httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, hcProxyHost);
+		 */
+		
 		
 		context = HttpClientContext.create();
 		this.scheme = scheme;
@@ -285,4 +310,26 @@ public abstract class AbstractClient {
 	public FimgStoreUriBuilder getUriBuilder(){
 		return uriBuilder;
 	}
+
+	public void setProxy(String host, int port){
+		setProxy(host, port, null, null, null, null);
+	}
+	
+	public void setProxy(String host, int port, String user, String password, String localMachineName, String domainName){
+		if(host == null || host.isEmpty() || port == 0){
+			logger.error("Setting no proxy! Host or port is empty!");
+			return;
+		}
+		HttpHost httpHost = new HttpHost(host, port);
+		builder.setProxy(httpHost);
+		//TODO test with proxy authentication
+		if(user != null && !user.isEmpty() && password != null && !password.isEmpty()){
+			NTCredentials ntCreds = new NTCredentials(user, password, localMachineName, domainName );
+			CredentialsProvider credsProvider = new BasicCredentialsProvider();
+			credsProvider.setCredentials( new AuthScope(host,port), ntCreds);
+			builder.setDefaultCredentialsProvider(credsProvider);
+			builder.setProxyAuthenticationStrategy(new ProxyAuthenticationStrategy());
+		}
+	}
+	
 }
