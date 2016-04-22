@@ -100,33 +100,12 @@ public abstract class AbstractClient {
 
 	protected void initialize(final Scheme scheme, final String host, final Integer port, final String serverContext, Credentials creds) {
 		uriBuilder = new FimgStoreUriBuilder(scheme.toString(), host, port, serverContext);
+		//Pooling Http client connection manager is default. Do not set in order to use system properties!
 //		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 //		builder = HttpClients.custom().setConnectionManager(cm);
+		// use system properties, such as proxy settings
 		builder = HttpClients.custom().useSystemProperties();
-		builder.setUserAgent(userAgent);
-
-		// FIXME -- check http/https proxy settings (user/pw/ authentication strategy)
-//		final String proxy = System.getProperty(scheme.toString() + ".proxyHost");
-//		final int proxyPort = Integer.parseInt(System.getProperty(scheme.toString() + ".proxyPort"));
-//		final String proxyUser = System.getProperty(scheme.toString() + ".proxyUser");
-//		final String proxyPassword = System.getProperty(scheme.toString() + ".proxyPassword");
-//		setProxy(host, port, user, password, localMachineName, domainName);
-//		builder.
-		
-		/*
-		 * String proxyHost = ...;
-			int proxyPort = ...;
-			String proxyUsername = ...;
-			String proxyPassword = ...;
-			
-			final HttpHost hcProxyHost = new HttpHost(proxyHost, proxyPort, "http");
-			httpclient.getCredentialsProvider().setCredentials(
-			                        new AuthScope(proxyHost, proxyPort),
-			                        new UsernamePasswordCredentials(proxyUsername,
-			new String(proxyPassword)));
-			httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, hcProxyHost);
-		 */
-		
+		builder.setUserAgent(userAgent);		
 		
 		context = HttpClientContext.create();
 		this.scheme = scheme;
