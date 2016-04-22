@@ -2,7 +2,6 @@ package org.dea.fimgstoreclient;
 
 import java.io.IOException;
 import java.net.ProtocolException;
-import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URL;
 
@@ -26,8 +25,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.ProxyAuthenticationStrategy;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
