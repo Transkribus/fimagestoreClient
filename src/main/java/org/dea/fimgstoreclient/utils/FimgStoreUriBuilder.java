@@ -197,9 +197,9 @@ public class FimgStoreUriBuilder {
 	 * jpg
 	 * 
 	 * Examples: for rotation about 35 degress and conversion to png:
-	 * convertOpts=-rotate 35 convertExt=png
-	 * http://localhost:8880/imagestore/GetImage
-	 * ?id=DWWAGAYXTSHYTZVPLTYJSKBF&convertOpts=-rotate+35&convertExt=png note
+	 * <code>convertOpts=-rotate 35 convertExt=png</code>
+	 * <code>http://localhost:8880/imagestore/GetImage
+	 * ?id=DWWAGAYXTSHYTZVPLTYJSKBF&convertOpts=-rotate+35&convertExt=png</code> note
 	 * that the above url is encoded into UTF-8 format!
 	 * 
 	 * Use the convenience functions in util.GetImageClient to create valid

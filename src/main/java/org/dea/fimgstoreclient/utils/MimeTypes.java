@@ -15,12 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Taken from package org.dea.imagestore.img <br/>
+ * Taken from package org.dea.imagestore.img <br>
  * 
  * Based on lookup routine Copyright (c) 2003-2009, Jodd Team (jodd.org). All
- * Rights Reserved. <br/>
+ * Rights Reserved. <br>
  * 
- * Map file extensions to MIME types. Based on the Apache mime.types file. <br/>
+ * Map file extensions to MIME types. Based on the Apache mime.types file. <br>
  * http://www.iana.org/assignments/media-types/
  */
 public class MimeTypes {

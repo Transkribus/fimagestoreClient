@@ -17,7 +17,7 @@ import org.dea.fimgstoreclient.FimgStoreConstants;
 /**
  * A {@link ResponseHandler} that takes the Response from a FimgStore POST
  * Request and returns the generated file key as String for successful (2xx)
- * responses. If the response code was >= 300, the response body is consumed and
+ * responses. If the response code was &gt;= 300, the response body is consumed and
  * an {@link HttpResponseException} is thrown.<br>
  * Based on {@link BasicResponseHandler} in apache http client 4.3
  * <p>

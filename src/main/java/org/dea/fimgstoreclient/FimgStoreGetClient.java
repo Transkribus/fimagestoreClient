@@ -76,7 +76,7 @@ public class FimgStoreGetClient extends AbstractClient {
 	}
 
 	/**
-	 * Gets an Image from Fimagestore and returns a {@link FimgstoreFile}
+	 * Gets an Image from Fimagestore and returns a {@link org.dea.fimgstoreclient.beans.FimgstoreFile}
 	 * containing orig. filename, the file data as byte[] and the download time
 	 * @param imgKey the key to the image to be retrieved
 	 * @param uri the complete URI to the object to be retrieved
@@ -101,7 +101,7 @@ public class FimgStoreGetClient extends AbstractClient {
 	}
 
 	/**
-	 * Gets an Image from Fimagestore and returns a {@link FimgstoreFile}
+	 * Gets an Image from Fimagestore and returns a {@link org.dea.fimgstoreclient.beans.FimgstoreFile}
 	 * containing orig. filename, the file data as byte[] and the download time
 	 * @param imgKey the key to the image to be retrieved
 	 * @return a FimgStoreImg object containing all data from the response
@@ -120,9 +120,9 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * a filenotfoundexception will be returned!
 	 * 
 	 * @param imgKey the key to the image to be retrieved
-	 * @param type {@link ImgType} enum
-	 * @return a {@link FimgStoreImg} object containing all data from the response
-	 * @throws IOException
+	 * @param type {@link org.dea.fimgstoreclient.beans.ImgType} enum
+	 * @return a {@link org.dea.fimgstoreclient.beans.FimgStoreImg} object containing all data from the response
+	 * @throws IOException if network error occurs
 	 * @throws IllegalArgumentException
 	 */
 	public FimgStoreImg getImg(final String imgKey, final ImgType type)
@@ -146,7 +146,7 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * 
 	 * @param imgKey the key of the image
 	 * @param scalePerc = percentageOfScaling
-	 * @return {@link FimgStoreImg}
+	 * @return {@link org.dea.fimgstoreclient.beans.FimgStoreImg}
 	 * @throws IOException if network error occurs
 	 * @throws IllegalArgumentException if any param is in a bad format
 	 */
@@ -164,7 +164,8 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * @param imgKey the key of the image
 	 * @param xPixels the width in pixels
 	 * @param yPixels the height in pixels
-	 * @return {@link FimgStoreImg}
+	 * @param preserveAspect if true, aspect is preserved and the height (yPixels) is overwritten
+	 * @return {@link org.dea.fimgstoreclient.beans.FimgStoreImg}
 	 * @throws IOException if network error occurs
 	 * @throws IllegalArgumentException if any param is in a bad format
 	 */
@@ -185,7 +186,7 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * @param posY offset top
 	 * @param width width of the snippet
 	 * @param height height of the snippet
-	 * @return {@link FimgStoreImg}
+	 * @return {@link org.dea.fimgstoreclient.beans.FimgStoreImg}
 	 * @throws IOException if network error occurs
 	 * @throws IllegalArgumentException if any param is in a bad format
 	 */
@@ -206,16 +207,16 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * jpg
 	 * 
 	 * Examples: for rotation about 35 degress and conversion to png:
-	 * convertOpts=-rotate 35 convertExt=png
-	 * http://localhost:8880/imagestore/GetImage
-	 * ?id=DWWAGAYXTSHYTZVPLTYJSKBF&convertOpts=-rotate+35&convertExt=png note
+	 * <code>convertOpts=-rotate 35 convertExt=png</code>
+	 * <code>http://localhost:8880/imagestore/GetImage
+	 * ?id=DWWAGAYXTSHYTZVPLTYJSKBF&convertOpts=-rotate+35&convertExt=png</code> note
 	 * that the above url is encoded into UTF-8 format!
 	 * 
 	 * 
 	 * @param imgKey key of the file to retrieve
 	 * @param convertOps convert options string
 	 * @param convertExt extension  of the file to be returned, e.g. jpg
-	 * @return {@link FimgStoreImg}
+	 * @return {@link org.dea.fimgstoreclient.beans.FimgStoreImg}
 	 * @throws IOException if network error occurs
 	 * @throws IllegalArgumentException if any param is in a bad format
 	 */
@@ -231,7 +232,7 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * Get the metadata for an img
 	 * 
 	 * @param key the file key
-	 * @return {@link FimgStoreFileMd}
+	 * @return {@link org.dea.fimgstoreclient.beans.FimgStoreFileMd}
 	 * @throws IOException if network error occurs
 	 * @throws IllegalArgumentException if any param is in a bad format
 	 */
@@ -264,7 +265,7 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * time
 	 * 
 	 * @param fileKey the file key
-	 * @return {@link FimgStoreXml}
+	 * @return {@link org.dea.fimgstoreclient.beans.FimgStoreXml}
 	 * @throws IOException if network error occurs
 	 * @throws IllegalArgumentException if any param is in a bad format
 	 */
@@ -302,7 +303,7 @@ public class FimgStoreGetClient extends AbstractClient {
 	/**
 	 * Get a txt file from the fimagestore
 	 * @param fileKey the file key
-	 * @return {@link FimgStoreTxt}
+	 * @return {@link org.dea.fimgstoreclient.beans.FimgStoreTxt}
 	 * @throws IOException if network error occurs
 	 */
 	public FimgStoreTxt getTxt(String fileKey) throws IOException {
@@ -363,25 +364,6 @@ public class FimgStoreGetClient extends AbstractClient {
 		return saveFile(uri, path, null);
 	}
 	
-	/**
-	 * rather save stuff outside to file than here. not sure if needed...
-	 * 
-	 * @param fileKey
-	 *            file id in the fimagestore
-	 * 
-	 * @param path
-	 *            the directory(!) where the file is stored with its original
-	 *            file name
-	 * 
-	 * @param params
-	 *            all the GET parameters that should be used
-	 * 
-	 * @return File object reference to the created file in the filesystem
-	 * 
-	 * @throws IllegalArgumentException if any parameter is bad
-	 * 
-	 * @throws IOException if network error occurs
-	 */
 	public File saveFile(final URI uri, String path, String fileName)
 			throws IllegalArgumentException, IOException {
 		CloseableHttpResponse response = null;

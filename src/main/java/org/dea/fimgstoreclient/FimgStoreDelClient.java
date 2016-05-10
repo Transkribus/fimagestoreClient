@@ -33,6 +33,7 @@ public class FimgStoreDelClient extends AbstractClient {
 	 * Delete the file with this key. If request fails, then retry for nrOfRetries times.
 	 * @param fileKey the key of the file to be deleted
 	 * @param nrOfRetries retry for nrOfRetries times
+	 * @return true if deletion was success
 	 * @throws IOException of network error occurs
 	 * @throws AuthenticationException if authentication fails
 	 */

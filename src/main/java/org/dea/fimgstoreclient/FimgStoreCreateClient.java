@@ -1,33 +1,23 @@
 package org.dea.fimgstoreclient;
 
 import java.awt.Point;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.http.Header;
-import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.ByteArrayBody;
-import org.apache.http.entity.mime.content.ContentBody;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.dea.fimgstoreclient.AbstractClient.Scheme;
 import org.dea.fimgstoreclient.responsehandler.FimgStoreUploadResponseHandler;
-import org.dea.fimgstoreclient.utils.MimeTypes;
+import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.pattern.Util;
 
 /**
  * Client for creating new versions of already stored objects.
@@ -70,7 +60,7 @@ public class FimgStoreCreateClient extends AbstractClient {
 	
 
 	/**
-	 * Creates a new file on the fimagestore using the given getUri (constructed e.g. using the {@link FimgStoreUriBuilder}) and the additional
+	 * Creates a new file on the fimagestore using the given getUri (constructed e.g. using the {@link org.dea.fimgstoreclient.utils.FimgStoreUriBuilder}) and the additional
 	 * parameters isPartOf, timeout and replaceKey which all can be null.\n
 	 * The key of the new file is returned.
 	 * @param getUri the URI to the original object
