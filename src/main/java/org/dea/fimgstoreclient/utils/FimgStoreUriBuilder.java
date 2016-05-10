@@ -196,10 +196,9 @@ public class FimgStoreUriBuilder {
 	 * specifies the extension of the output file (without the dot!), default =
 	 * jpg
 	 * 
-	 * Examples: for rotation about 35 degress and conversion to png:
-	 * <code>convertOpts=-rotate 35 convertExt=png</code>
-	 * <code>http://localhost:8880/imagestore/GetImage
-	 * ?id=DWWAGAYXTSHYTZVPLTYJSKBF&convertOpts=-rotate+35&convertExt=png</code> note
+	 * Examples: for rotation about 35 degress and conversion to png:<br>
+	 * <code>convertOpts=-rotate 35 convertExt=png</code><br>
+	 * <code>http://localhost:8880/imagestore/GetImage?id=DWWAGAYXTSHYTZVPLTYJSKBF&convertOpts=-rotate+35&convertExt=png</code> note
 	 * that the above url is encoded into UTF-8 format!
 	 * 
 	 * Use the convenience functions in util.GetImageClient to create valid

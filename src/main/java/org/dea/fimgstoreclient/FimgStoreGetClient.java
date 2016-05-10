@@ -76,7 +76,7 @@ public class FimgStoreGetClient extends AbstractClient {
 	}
 
 	/**
-	 * Gets an Image from Fimagestore and returns a {@link org.dea.fimgstoreclient.beans.FimgstoreFile}
+	 * Gets an Image from Fimagestore and returns a {@link org.dea.fimgstoreclient.beans.FimgstoreImg}
 	 * containing orig. filename, the file data as byte[] and the download time
 	 * @param imgKey the key to the image to be retrieved
 	 * @param uri the complete URI to the object to be retrieved
@@ -101,7 +101,7 @@ public class FimgStoreGetClient extends AbstractClient {
 	}
 
 	/**
-	 * Gets an Image from Fimagestore and returns a {@link org.dea.fimgstoreclient.beans.FimgstoreFile}
+	 * Gets an Image from Fimagestore and returns a {@link org.dea.fimgstoreclient.beans.FimgStoreImg}
 	 * containing orig. filename, the file data as byte[] and the download time
 	 * @param imgKey the key to the image to be retrieved
 	 * @return a FimgStoreImg object containing all data from the response
@@ -123,7 +123,7 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * @param type {@link org.dea.fimgstoreclient.beans.ImgType} enum
 	 * @return a {@link org.dea.fimgstoreclient.beans.FimgStoreImg} object containing all data from the response
 	 * @throws IOException if network error occurs
-	 * @throws IllegalArgumentException
+	 * @throws IllegalArgumentException if a parameter is bad
 	 */
 	public FimgStoreImg getImg(final String imgKey, final ImgType type)
 			throws IOException {
@@ -206,10 +206,9 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * specifies the extension of the output file (without the dot!), default =
 	 * jpg
 	 * 
-	 * Examples: for rotation about 35 degress and conversion to png:
-	 * <code>convertOpts=-rotate 35 convertExt=png</code>
-	 * <code>http://localhost:8880/imagestore/GetImage
-	 * ?id=DWWAGAYXTSHYTZVPLTYJSKBF&convertOpts=-rotate+35&convertExt=png</code> note
+	 * Examples: for rotation about 35 degress and conversion to png:<br>
+	 * <code>convertOpts=-rotate 35 convertExt=png</code><br>
+	 * <code>http://localhost:8880/imagestore/GetImage?id=DWWAGAYXTSHYTZVPLTYJSKBF&convertOpts=-rotate+35&convertExt=png</code> note
 	 * that the above url is encoded into UTF-8 format!
 	 * 
 	 * 
