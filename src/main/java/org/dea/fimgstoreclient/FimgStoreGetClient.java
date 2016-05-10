@@ -76,7 +76,7 @@ public class FimgStoreGetClient extends AbstractClient {
 	}
 
 	/**
-	 * Gets an Image from Fimagestore and returns a {@link org.dea.fimgstoreclient.beans.FimgstoreImg}
+	 * Gets an Image from Fimagestore and returns a {@link org.dea.fimgstoreclient.beans.FimgStoreImg}
 	 * containing orig. filename, the file data as byte[] and the download time
 	 * @param imgKey the key to the image to be retrieved
 	 * @param uri the complete URI to the object to be retrieved
