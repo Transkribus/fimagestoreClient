@@ -18,7 +18,7 @@ public class StreamUtils {
 	 * Reads an input stream and copies its content to a byte[]
 	 * @param is InputStream
 	 * @return data as byte[]
-	 * @throws IOException
+	 * @throws IOException if Stream can't be read
 	 */
 	public static ByteArrayOutputStream writeStreamToByteArr(InputStream is) throws IOException {	
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();		
@@ -60,10 +60,10 @@ public class StreamUtils {
 	/**
 	 * Reads an input stream and writes its content to a file
 	 * 
-	 * @param is
-	 * @param path
-	 * @return
-	 * @throws IOException
+	 * @param is InputStream
+	 * @param path path to result file
+	 * @return the result File object
+	 * @throws IOException if file can't be written or stream can't be read
 	 */
 	public static File writeStreamToFile(InputStream is, String path)
 			throws IOException {

@@ -31,10 +31,10 @@ public class FimgStoreDelClient extends AbstractClient {
 
 	/**
 	 * Delete the file with this key. If request fails, then retry for nrOfRetries times.
-	 * @param fileKey
-	 * @param nrOfRetries 
-	 * @throws IOException 
-	 * @throws AuthenticationException 
+	 * @param fileKey the key of the file to be deleted
+	 * @param nrOfRetries retry for nrOfRetries times
+	 * @throws IOException of network error occurs
+	 * @throws AuthenticationException if authentication fails
 	 */
 	public boolean deleteFile(final String fileKey, int nrOfRetries) throws IOException, AuthenticationException {
 		logger.debug("deleteFile()");

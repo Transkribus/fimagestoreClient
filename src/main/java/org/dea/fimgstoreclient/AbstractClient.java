@@ -72,12 +72,6 @@ public abstract class AbstractClient {
 		this.initialize(scheme, host, port, serverContext, creds);
 	}
 
-	/**
-	 * This constructor is only applicable for http connection!
-	 * 
-	 * @param url
-	 * @throws ProtocolException
-	 */
 	public AbstractClient(URL url) throws ProtocolException {
 		final String host = url.getHost();
 		
@@ -142,8 +136,8 @@ public abstract class AbstractClient {
 	/**
 	 * Perform HTTP GET and check status code in response. Response is returned and content handled outside.
 	 * 
-	 * @param uri
-	 * @return
+	 * @param uri the fimagestore URI to an object
+	 * @return the response
 	 * @throws IOException
 	 *             if status code is not 200
 	 */
@@ -165,11 +159,11 @@ public abstract class AbstractClient {
 	/**
 	 * Perform HTTPS GET (with authentication) and check status code in response. Response is returned and content handled outside.
 	 * 
-	 * @param uri
-	 * @return
+	 * @param uri the fimagestore URI to an object
+	 * @return the response
 	 * @throws IOException
 	 *             if status code is not 200
-	 * @throws AuthenticationException 
+	 * @throws AuthenticationException if authentication fails
 	 */
 	protected CloseableHttpResponse getAndAuthenticate(URI uri) throws IOException, AuthenticationException {
 		if(creds == null){ 
@@ -205,13 +199,13 @@ public abstract class AbstractClient {
 	}
 
 	/**
-	 * post an entity to the fimgstore. 
+	 * post an entity to the fimagestore. 
 	 * 
-	 * @param entity
+	 * @param entity the object entity to be posted
 	 * @param responseHandler the Handler object that checks status codes and produces the result String
-	 * @return
-	 * @throws IOException
-	 * @throws AuthenticationException
+	 * @return the file key to the newly created file
+	 * @throws IOException if any error happens on the network
+	 * @throws AuthenticationException if authentication fails
 	 */
 	protected String post(HttpEntity entity, ResponseHandler<String> responseHandler) throws IOException, AuthenticationException {
 		if(creds == null){ 
@@ -251,7 +245,7 @@ public abstract class AbstractClient {
 	/**
 	 * Causes the client to be reinitialized with the specified scheme and old host/user/pw.
 	 *  
-	 * @param scheme
+	 * @param scheme either http or https
 	 */
 	public void setScheme(Scheme scheme) {
 		// reinitialize the client
@@ -261,7 +255,7 @@ public abstract class AbstractClient {
 	/**
 	 * Get info on the used scheme
 	 * 
-	 * @return
+	 * @return either http or https
 	 */
 	public String getScheme() {
 		return scheme.toString();

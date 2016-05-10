@@ -50,9 +50,9 @@ public class FimgStoreMdParser {
 	
 	/**
 	 * Parses the InputStream for FileMetadata and determines whether to return a Image or FileMetadata Object
-	 * @param is
+	 * @param is InputStream to parse
 	 * @return {@link FimgStoreImgMd} or {@link FimgStoreFileMd}
-	 * @throws IOException
+	 * @throws IOException if network error occurs or stream can't be read
 	 */
 	public static FimgStoreFileMd parse(InputStream is) throws IOException {
 		FimgStoreImgMd md = null;

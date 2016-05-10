@@ -30,11 +30,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Client for posting stuff to the fimagestore.
+ * Client for creating new versions of already stored objects.
  * 
- * TODO Batch upload methods
  * 
- * @author philip
+ * @author jkloe
  *
  */
 public class FimgStoreCreateClient extends AbstractClient {
@@ -52,6 +51,15 @@ public class FimgStoreCreateClient extends AbstractClient {
 	
 	/**
 	 * Wrapper method for creating a blackened image out of an existing one on the fimagestore
+	 * @param imgKey key to the original image
+	 * @param isPartOf the collection name
+	 * @param timeout in milliseconds
+	 * @param replaceKey the object to replace. can be null, then new key is created
+	 * @param polygonPtsList points of the polygon to be blackened
+	 * @return the filekey for the result object
+	 * @throws AuthenticationException if authentication fails
+	 * @throws ClientProtocolException client side error
+	 * @throws IOException if network error occurs
 	 */
 	@SafeVarargs
 	public final String createBlackenedImage(String imgKey, String isPartOf, Integer timeout, String replaceKey, List<Point> ...polygonPtsList) throws AuthenticationException, ClientProtocolException, IOException {
@@ -60,10 +68,19 @@ public class FimgStoreCreateClient extends AbstractClient {
 		return createFile(blackenUri, isPartOf, timeout, replaceKey);
 	}
 	
+
 	/**
 	 * Creates a new file on the fimagestore using the given getUri (constructed e.g. using the {@link FimgStoreUriBuilder}) and the additional
 	 * parameters isPartOf, timeout and replaceKey which all can be null.\n
 	 * The key of the new file is returned.
+	 * @param getUri the URI to the original object
+	 * @param isPartOf the collection name
+	 * @param timeout in milliseconds
+	 * @param replaceKey the object to replace. can be null, then new key is created
+	 * @return the filekey for the result object
+	 * @throws AuthenticationException if authentication fails
+	 * @throws ClientProtocolException client side error
+	 * @throws IOException if network error occurs
 	 */
 	public String createFile(URI getUri, String isPartOf, Integer timeout, String replaceKey) throws AuthenticationException, ClientProtocolException, IOException {
 		

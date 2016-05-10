@@ -45,10 +45,10 @@ public class FimgStorePostClient extends AbstractClient {
 	 * 
 	 * @param ulFile file to upload
 	 * @param isPartOf a String that identifies the collection
-	 * @param nrOfRetries 
+	 * @param nrOfRetries nr of times to retry if failure
 	 * @return fileKey for subsequent retrieval of file
-	 * @throws IOException
-	 * @throws AuthenticationException
+	 * @throws IOException if network error occurs
+	 * @throws AuthenticationException if authentication fails
 	 */
 	public String postFile(File ulFile, String isPartOf, int nrOfRetries) throws IOException, AuthenticationException {
 		if (!ulFile.canRead()) {
@@ -67,9 +67,16 @@ public class FimgStorePostClient extends AbstractClient {
 //		return postFile(ulFile, isPartOf, 0);
 //	}
 	
+	
 	/**
-	 * post data as a file to the image store and get the retrieval key
-	 * 
+	 * Post raw data as a file to the image store and get the retrieval key
+	 * @param data the bytes to post
+	 * @param fileName the original file name
+	 * @param isPartOf the collection name
+	 * @param nrOfRetries nr of times to retry if failure
+	 * @return the key of the object on the image store
+	 * @throws IOException if network error occurs
+	 * @throws AuthenticationException if authentication fails
 	 */
 	public String postFile(byte[] data, final String fileName, final String isPartOf, final int nrOfRetries) throws IOException, AuthenticationException {
 
@@ -103,8 +110,15 @@ public class FimgStorePostClient extends AbstractClient {
 	}
 	
 	/**
-	 * replace a file at the image store and get the retrieval key
-	 * 
+	 * Replace a file at the image store and get the retrieval key
+	 * @param key the key of the file to be replaced
+	 * @param data raw bytes to be posted
+	 * @param fileName the original file's name
+	 * @param isPartOf the collection name on the fimagestore
+	 * @param nrOfRetries nr of times to retry if failure
+	 * @return the key of the newly created object
+	 * @throws IOException if network error occurs
+	 * @throws AuthenticationException if authentication fails
 	 */
 	public String replaceFile(final String key, byte[] data, final String fileName, final String isPartOf, final int nrOfRetries) throws IOException, AuthenticationException {
 

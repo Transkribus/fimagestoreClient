@@ -325,9 +325,12 @@ public class MimeTypes {
 
 	}
 
+	
 	/**
 	 * Registers MIME type for provided extension. Existing extension type will
 	 * be overriden.
+	 * @param ext the extension to register
+	 * @param mimeType the mimetype the extension will be registered to
 	 */
 	public static void registerMimeType(String ext, String mimeType) {
 		mimeTypeMapping.put(ext, mimeType);
@@ -336,6 +339,8 @@ public class MimeTypes {
 	/**
 	 * Returns the corresponding MIME type to the given extension. If no MIME
 	 * type was found it returns 'application/octet-stream' type.
+	 * @param ext the extension to resolve
+	 * @return the mimetype
 	 */
 	public static String getMimeType(String ext) {
 		String mimeType = lookupMimeType(ext);
@@ -347,14 +352,18 @@ public class MimeTypes {
 
 	/**
 	 * Simply returns MIME type or <code>null</code> if no type is found.
+	 * @param ext the extension to resolve
+	 * @return the mimetype or <code>null</code>
 	 */
 	private static String lookupMimeType(String ext) {
 		return mimeTypeMapping.get(ext.toLowerCase());
 	}
 
 	/**
-	 * Returns the extension for a given mime type or <code>null</code> if not
+	 * * Returns the extension for a given mime type or <code>null</code> if not
 	 * found.
+	 * @param mimeType the mimetype to resolve
+	 * @return the extension
 	 */
 	public static String lookupExtension(String mimeType) {
 		for (Map.Entry<String, String> e : mimeTypeMapping.entrySet()) {

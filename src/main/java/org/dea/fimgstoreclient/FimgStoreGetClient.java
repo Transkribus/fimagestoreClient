@@ -53,11 +53,10 @@ public class FimgStoreGetClient extends AbstractClient {
 	/**
 	 * Gets the entity content (attached file) as InputStream
 	 * 
-	 * @param fileKey
-	 * @param params
-	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws IOException
+	 * @param uri the uri of the object to be retrieved
+	 * @return the inputstream of the file from the response object
+	 * @throws IllegalArgumentException if URI is invalid or null
+	 * @throws IOException if network error occurs
 	 */
 	public InputStream getResourceAsStream(final URI uri) throws IOException {
 		CloseableHttpResponse response = null;
@@ -79,14 +78,10 @@ public class FimgStoreGetClient extends AbstractClient {
 	/**
 	 * Gets an Image from Fimagestore and returns a {@link FimgstoreFile}
 	 * containing orig. filename, the file data as byte[] and the download time
-	 * 
-	 * @param imgKey
-	 * @param params
-	 *            Fimgstore parameters
-	 * @return FimgstoreFile
-	 * @throws IllegalArgumentException
-	 *             no
-	 * @throws IOException
+	 * @param imgKey the key to the image to be retrieved
+	 * @param uri the complete URI to the object to be retrieved
+	 * @return a FimgStoreImg object containing all data from the response
+	 * @throws IOException of network error occurs
 	 */
 	private FimgStoreImg getImg(final String imgKey, final URI uri)
 			throws IOException {
@@ -105,6 +100,13 @@ public class FimgStoreGetClient extends AbstractClient {
 		return new FimgStoreImg(imgKey, fileName, data.toByteArray(), uri);
 	}
 
+	/**
+	 * Gets an Image from Fimagestore and returns a {@link FimgstoreFile}
+	 * containing orig. filename, the file data as byte[] and the download time
+	 * @param imgKey the key to the image to be retrieved
+	 * @return a FimgStoreImg object containing all data from the response
+	 * @throws IOException of network error occurs
+	 */
 	public FimgStoreImg getImg(final String imgKey) throws IOException {
 		// validate params and build Uri
 		final URI uri = uriBuilder.getFileUri(imgKey);
@@ -117,9 +119,9 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * be returned! If a specified fileType is not available for the given key,
 	 * a filenotfoundexception will be returned!
 	 * 
-	 * @param imgKey
-	 * @param type
-	 * @return
+	 * @param imgKey the key to the image to be retrieved
+	 * @param type {@link ImgType} enum
+	 * @return a {@link FimgStoreImg} object containing all data from the response
 	 * @throws IOException
 	 * @throws IllegalArgumentException
 	 */
@@ -140,13 +142,13 @@ public class FimgStoreGetClient extends AbstractClient {
 	}
 
 	/**
-	 * scalePerc=percentageOfScaling
+	 * get a percentage scaled version of the image
 	 * 
-	 * @param imgKey
-	 * @param scalePerc
-	 * @return
-	 * @throws IOException
-	 * @throws IllegalArgumentException
+	 * @param imgKey the key of the image
+	 * @param scalePerc = percentageOfScaling
+	 * @return {@link FimgStoreImg}
+	 * @throws IOException if network error occurs
+	 * @throws IllegalArgumentException if any param is in a bad format
 	 */
 	public FimgStoreImg getImgPercScaled(final String imgKey, final int scalePerc)
 			throws IOException {
@@ -157,14 +159,14 @@ public class FimgStoreGetClient extends AbstractClient {
 	}
 
 	/**
+	 * get a version of the image that is scaled to a given width/height
 	 * 
-	 * 
-	 * @param imgKey
-	 * @param xPixels
-	 * @param yPixels
-	 * @return
-	 * @throws IOException
-	 * @throws IllegalArgumentException
+	 * @param imgKey the key of the image
+	 * @param xPixels the width in pixels
+	 * @param yPixels the height in pixels
+	 * @return {@link FimgStoreImg}
+	 * @throws IOException if network error occurs
+	 * @throws IllegalArgumentException if any param is in a bad format
 	 */
 	public FimgStoreImg getImgXyScaled(final String imgKey, final int xPixels, final int yPixels,
 			boolean preserveAspect) throws IOException {
@@ -174,17 +176,18 @@ public class FimgStoreGetClient extends AbstractClient {
 	}
 
 	/**
+	 * Get a cropped version of the image
 	 * 
 	 * crop=posX x posY x width x height
 	 * 
-	 * @param imgKey
-	 * @param posX
-	 * @param posY
-	 * @param width
-	 * @param height
-	 * @return
-	 * @throws IOException
-	 * @throws IllegalArgumentException
+	 * @param imgKey the key of the file to crop
+	 * @param posX offset left
+	 * @param posY offset top
+	 * @param width width of the snippet
+	 * @param height height of the snippet
+	 * @return {@link FimgStoreImg}
+	 * @throws IOException if network error occurs
+	 * @throws IllegalArgumentException if any param is in a bad format
 	 */
 	public FimgStoreImg getImgCropped(final String imgKey, final int posX, final int posY,
 			final int width, final int height) throws IOException {
@@ -208,15 +211,13 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * ?id=DWWAGAYXTSHYTZVPLTYJSKBF&convertOpts=-rotate+35&convertExt=png note
 	 * that the above url is encoded into UTF-8 format!
 	 * 
-	 * Use the convenience functions in util.GetImageClient to create valid
-	 * retrieval urls!)
 	 * 
-	 * @param imgKey
-	 * @param convertOps
-	 * @param convertExt
-	 * @return
-	 * @throws IOException
-	 * @throws IllegalArgumentException
+	 * @param imgKey key of the file to retrieve
+	 * @param convertOps convert options string
+	 * @param convertExt extension  of the file to be returned, e.g. jpg
+	 * @return {@link FimgStoreImg}
+	 * @throws IOException if network error occurs
+	 * @throws IllegalArgumentException if any param is in a bad format
 	 */
 	public FimgStoreImg getImgConv(final String imgKey, final String convertOps,
 			final String convertExt) throws IOException {
@@ -229,10 +230,10 @@ public class FimgStoreGetClient extends AbstractClient {
 	/**
 	 * Get the metadata for an img
 	 * 
-	 * @param key
-	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws IOException
+	 * @param key the file key
+	 * @return {@link FimgStoreFileMd}
+	 * @throws IOException if network error occurs
+	 * @throws IllegalArgumentException if any param is in a bad format
 	 */
 	public FimgStoreFileMd getFileMd(final String key) throws IOException {
 		CloseableHttpResponse response = null;
@@ -262,13 +263,10 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * containing orig. filename, the file content as Document and the download
 	 * time
 	 * 
-	 * @param fileKey
-	 * @param params
-	 *            Fimgstore parameters
-	 * @return FimgstoreFile
-	 * @throws IllegalArgumentException
-	 *             no
-	 * @throws IOException
+	 * @param fileKey the file key
+	 * @return {@link FimgStoreXml}
+	 * @throws IOException if network error occurs
+	 * @throws IllegalArgumentException if any param is in a bad format
 	 */
 	public FimgStoreXml getXml(final String fileKey) throws IOException {
 		CloseableHttpResponse response = null;
@@ -300,6 +298,13 @@ public class FimgStoreGetClient extends AbstractClient {
 		return xml;
 	}
 	
+	
+	/**
+	 * Get a txt file from the fimagestore
+	 * @param fileKey the file key
+	 * @return {@link FimgStoreTxt}
+	 * @throws IOException if network error occurs
+	 */
 	public FimgStoreTxt getTxt(String fileKey) throws IOException {
 		CloseableHttpResponse response = null;
 		String text = null;
@@ -322,9 +327,7 @@ public class FimgStoreGetClient extends AbstractClient {
 	}
 
 	/*
-	 * TODO - Image delete: URL = https://my.host.com/imagestore/DeleteImage?id=
-	 * Deletes the image with the specified id
-	 * 
+	 * TODO  
 	 * - Image search: URL = https://my.host.com/imagestore/SearchImages
 	 * Searches for images using the embedded database and returns all matching
 	 * file infos. Parameters: fnMask, isPartOfMask specifying the search masks
@@ -375,9 +378,9 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * 
 	 * @return File object reference to the created file in the filesystem
 	 * 
-	 * @throws IllegalArgumentException
+	 * @throws IllegalArgumentException if any parameter is bad
 	 * 
-	 * @throws IOException
+	 * @throws IOException if network error occurs
 	 */
 	public File saveFile(final URI uri, String path, String fileName)
 			throws IllegalArgumentException, IOException {
@@ -426,7 +429,7 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * Extract and validate Content-Disposition header. Rebuild original
 	 * attachment file name.
 	 * 
-	 * @param response
+	 * @param response the response to parse
 	 * @return original file name
 	 * @throws FileNotFoundException
 	 *             if no file is contained in response or the header is damaged

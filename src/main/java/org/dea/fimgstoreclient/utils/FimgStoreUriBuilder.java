@@ -66,11 +66,10 @@ public class FimgStoreUriBuilder {
 	 * be returned! If a specified fileType is not available for the given key,
 	 * a filenotfoundexception will be returned!
 	 * 
-	 * @param imgKey
-	 * @param type
-	 * @return
-	 * @throws IOException
-	 * @throws IllegalArgumentException
+	 * @param imgKey key of the file
+	 * @param type {@link ImgType}
+	 * @return URI of the specified file type
+	 * @throws IllegalArgumentException if a parameter is bad
 	 */
 	public URI getImgUri(final String imgKey, final ImgType type)
 			throws IllegalArgumentException {
@@ -106,6 +105,10 @@ public class FimgStoreUriBuilder {
 	/**
 	 * Returns the image with the specified key, drawing a black filled 
 	 * polygon over it as specified by polygonPts
+	 * @param imgKey key of the file
+	 * @param polygonPtsList points of polygons to be blackened
+	 * @return the URI of the blackened image
+	 * @throws IllegalArgumentException if a parameter is bad
 	 */
 	@SafeVarargs
 	public final URI getImgBlackenedUri(final String imgKey, List<Point> ...polygonPtsList)
@@ -131,11 +134,10 @@ public class FimgStoreUriBuilder {
 	/**
 	 * scalePerc=percentageOfScaling
 	 * 
-	 * @param imgKey
-	 * @param scalePerc
-	 * @return
-	 * @throws IOException
-	 * @throws IllegalArgumentException
+	 * @param imgKey key of original file
+	 * @param scalePerc percentage to scale
+	 * @return URI to scaled image
+	 * @throws IllegalArgumentException if a parameter is bad
 	 */
 	public URI getImgPercScaledUri(final String imgKey, final int scalePerc)
 			throws IllegalArgumentException {
@@ -149,16 +151,6 @@ public class FimgStoreUriBuilder {
 		return buildURI(imgKey, param);
 	}
 
-	/**
-	 * 
-	 * 
-	 * @param imgKey
-	 * @param xPixels
-	 * @param yPixels
-	 * @return
-	 * @throws IOException
-	 * @throws IllegalArgumentException
-	 */
 	public URI getImgXyScaledUri(final String imgKey, final int xPixels, final int yPixels,
 			boolean preserveAspect) throws IllegalArgumentException {
 		// scaleXY=pixelsX x pixelsY[!] (the ! means 'do NOT respect aspect
@@ -179,14 +171,13 @@ public class FimgStoreUriBuilder {
 	 * 
 	 * crop=posX x posY x width x height
 	 * 
-	 * @param imgKey
-	 * @param posX
-	 * @param posY
-	 * @param width
-	 * @param height
-	 * @return
-	 * @throws IOException
-	 * @throws IllegalArgumentException
+	 * @param imgKey key of original image
+	 * @param posX x offset 
+	 * @param posY y offset
+	 * @param width width of snippet
+	 * @param height height of snippet
+	 * @return URI to cropped image
+	 * @throws IllegalArgumentException if a parameter is bad
 	 */
 	public URI getImgCroppedUri(final String imgKey, final int posX, final int posY,
 			final int width, final int height) throws IllegalArgumentException {
@@ -214,12 +205,11 @@ public class FimgStoreUriBuilder {
 	 * Use the convenience functions in util.GetImageClient to create valid
 	 * retrieval urls!)
 	 * 
-	 * @param imgKey
-	 * @param convertOps
-	 * @param convertExt
-	 * @return
-	 * @throws IOException
-	 * @throws IllegalArgumentException
+	 * @param imgKey original file's key
+	 * @param convertOps convert option string
+	 * @param convertExt extension of the result file
+	 * @return URI to the converted image
+	 * @throws IllegalArgumentException if a parameter is bad
 	 */
 	public URI getImgConvUri(final String imgKey, final String convertOps,
 			final String convertExt) throws IllegalArgumentException {
@@ -232,10 +222,9 @@ public class FimgStoreUriBuilder {
 	/**
 	 * Get the metadata for an img
 	 * 
-	 * @param imgKey
-	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws IOException
+	 * @param imgKey key of the file
+	 * @return URI to the metadata of the file
+	 * @throws IllegalArgumentException if imgKey is in bad format
 	 */
 	public URI getImgMdUri(final String imgKey) throws IllegalArgumentException {
 		NameValuePair param = new BasicNameValuePair(FimgStoreConstants.FILE_TYPE_PARAM, FimgStoreConstants.MD_FILETYPE_VALUE);
@@ -249,10 +238,10 @@ public class FimgStoreUriBuilder {
 	/**
 	 * Check the GET parameters and build the fimagestore URL
 	 * 
-	 * @param fileKey
-	 * @param params
-	 * @return
-	 * @throws IllegalArgumentException
+	 * @param fileKey key of the file
+	 * @param params params to use in the URI to build
+	 * @return a URI with all parameters
+	 * @throws IllegalArgumentException if a parameter is bad
 	 */
 	private URI buildURI(String fileKey, NameValuePair... params) throws IllegalArgumentException {
 		List<NameValuePair> paramsList;

@@ -18,9 +18,9 @@ import org.dea.fimgstoreclient.FimgStoreConstants;
  * A {@link ResponseHandler} that takes the Response from a FimgStore POST
  * Request and returns the generated file key as String for successful (2xx)
  * responses. If the response code was >= 300, the response body is consumed and
- * an {@link HttpResponseException} is thrown.<br/>
+ * an {@link HttpResponseException} is thrown.<br>
  * Based on {@link BasicResponseHandler} in apache http client 4.3
- * <p/>
+ * <p>
  * If this is used with
  * {@link org.apache.http.client.HttpClient#execute(org.apache.http.client.methods.HttpUriRequest, ResponseHandler)}
  * , HttpClient may handle redirects (3xx responses) internally.
@@ -30,10 +30,11 @@ import org.dea.fimgstoreclient.FimgStoreConstants;
 @Immutable
 public class FimgStoreUploadResponseHandler implements ResponseHandler<String> {
 
-	/**
+
+	/* 
 	 * Extracts the file key from the response body and returns it as a String
 	 * if the response was successful (a 2xx status code). If no response body
-	 * exists, this returns null. If the response was unsuccessful (>= 300
+	 * exists, this returns null. If the response was unsuccessful (&gt;= 300
 	 * status code) or no valid image key could be found, throws an {@link HttpResponseException}.
 	 */
 	public String handleResponse(final HttpResponse response) throws HttpResponseException,
