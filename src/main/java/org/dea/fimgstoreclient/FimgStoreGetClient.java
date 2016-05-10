@@ -208,7 +208,7 @@ public class FimgStoreGetClient extends AbstractClient {
 	 * 
 	 * Examples: for rotation about 35 degress and conversion to png:<br>
 	 * <code>convertOpts=-rotate 35 convertExt=png</code><br>
-	 * <code>http://localhost:8880/imagestore/GetImage?id=DWWAGAYXTSHYTZVPLTYJSKBF&convertOpts=-rotate+35&convertExt=png</code> note
+	 * <code>http://localhost:8880/imagestore/GetImage?id=DWWAGAYXTSHYTZVPLTYJSKBF&amp;convertOpts=-rotate+35&amp;convertExt=png</code> note
 	 * that the above url is encoded into UTF-8 format!
 	 * 
 	 * 
