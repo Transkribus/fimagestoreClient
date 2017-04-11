@@ -40,17 +40,22 @@ public class FimgStorePostClient extends AbstractClient {
 		super(scheme, host, port, serverContext, username, password);
 	}
 	
+	public String postFile(File ulFile, String isPartOf, int nrOfRetries) throws IOException, AuthenticationException {
+		return postFile(ulFile, isPartOf, nrOfRetries, null);
+	}
+	
 	/**
 	 * post a file to the image store and get the retrieval key
 	 * 
 	 * @param ulFile file to upload
 	 * @param isPartOf a String that identifies the collection
 	 * @param nrOfRetries nr of times to retry if failure
+	 * @param timeoutMinutes specifies the number of minutes after the file will be deleted on the fimagestore; null means no timeout
 	 * @return fileKey for subsequent retrieval of file
 	 * @throws IOException if network error occurs
 	 * @throws AuthenticationException if authentication fails
 	 */
-	public String postFile(File ulFile, String isPartOf, int nrOfRetries) throws IOException, AuthenticationException {
+	public String postFile(File ulFile, String isPartOf, int nrOfRetries, Integer timeoutMinutes) throws IOException, AuthenticationException {
 		if (!ulFile.canRead()) {
 			throw new IOException("UploadFile " + ulFile.getAbsoluteFile() + " is not readable.");
 		}
@@ -60,13 +65,16 @@ public class FimgStorePostClient extends AbstractClient {
 		final FileBody fileBody = new FileBody(ulFile, contentType, ulFile.getName());
 
 		//post and return key
-		return postContent(fileBody, isPartOf, null, nrOfRetries);
+		return postContent(fileBody, isPartOf, null, nrOfRetries, timeoutMinutes);
 	}
 	
 //	public String postFile(File ulFile, String isPartOf) throws IOException, AuthenticationException {
 //		return postFile(ulFile, isPartOf, 0);
 //	}
 	
+	public String postFile(byte[] data, final String fileName, final String isPartOf, final int nrOfRetries) throws IOException, AuthenticationException {
+		return postFile(data, fileName, isPartOf, nrOfRetries, null);
+	}
 	
 	/**
 	 * Post raw data as a file to the image store and get the retrieval key
@@ -78,7 +86,7 @@ public class FimgStorePostClient extends AbstractClient {
 	 * @throws IOException if network error occurs
 	 * @throws AuthenticationException if authentication fails
 	 */
-	public String postFile(byte[] data, final String fileName, final String isPartOf, final int nrOfRetries) throws IOException, AuthenticationException {
+	public String postFile(byte[] data, final String fileName, final String isPartOf, final int nrOfRetries, Integer timeoutMinutes) throws IOException, AuthenticationException {
 
 		if (data == null) {
 			throw new IOException("Data is NULL.");
@@ -90,7 +98,7 @@ public class FimgStorePostClient extends AbstractClient {
 		final ContentType contentType = getContentType(fileName);
 		final ByteArrayBody fileBody = new ByteArrayBody(data, contentType, fileName);
 		//post and return key
-		return postContent(fileBody, isPartOf, nrOfRetries);
+		return postContent(fileBody, isPartOf, null, nrOfRetries, timeoutMinutes);
 	}
 	
 	public String replaceFile(final String key, File ulFile, String isPartOf, int nrOfRetries) throws IOException, AuthenticationException {
@@ -106,7 +114,7 @@ public class FimgStorePostClient extends AbstractClient {
 		final FileBody fileBody = new FileBody(ulFile, contentType, ulFile.getName());
 
 		//post and return key
-		return postContent(fileBody, isPartOf, key, nrOfRetries);
+		return postContent(fileBody, isPartOf, key, nrOfRetries, null);
 	}
 	
 	/**
@@ -132,14 +140,14 @@ public class FimgStorePostClient extends AbstractClient {
 		final ContentType contentType = getContentType(fileName);
 		final ByteArrayBody fileBody = new ByteArrayBody(data, contentType, fileName);
 		//post and return key
-		return postContent(fileBody, isPartOf, key, nrOfRetries);
+		return postContent(fileBody, isPartOf, key, nrOfRetries, null);
 	}
 
 	private String postContent(ContentBody body, final String isPartOf, final int nrOfRetries) throws IOException, AuthenticationException {
-		return postContent(body, isPartOf, null, nrOfRetries);
+		return postContent(body, isPartOf, null, nrOfRetries, null);
 	}
 	
-	private String postContent(ContentBody body, final String isPartOf, final String key, int nrOfRetries) throws IOException, AuthenticationException {
+	private String postContent(ContentBody body, final String isPartOf, final String key, int nrOfRetries, Integer timeoutMinutes) throws IOException, AuthenticationException {
 
 		if (body == null) {
 			throw new IOException("Data is NULL.");
@@ -162,6 +170,10 @@ public class FimgStorePostClient extends AbstractClient {
 			// replace file. set parameter...
 			final StringBody stringBody = new StringBody(key, ContentType.TEXT_PLAIN);
 			entBuilder.addPart(FimgStoreConstants.REPLACE_ID_VAR_NAME, stringBody);
+		}
+		
+		if (timeoutMinutes != null) {
+			entBuilder.addPart(FimgStoreConstants.TIMEOUT_PARAM, new StringBody(""+timeoutMinutes, ContentType.TEXT_PLAIN));
 		}
 		
 		// add content

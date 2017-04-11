@@ -13,18 +13,12 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.dea.fimgstoreclient.responsehandler.FimgStoreUploadResponseHandler;
-import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.pattern.Util;
-
 /**
  * Client for creating new versions of already stored objects.
- * 
- * 
- * @author jkloe
- *
+ * @author sebic
  */
 public class FimgStoreCreateClient extends AbstractClient {
 	private static final Logger logger = LoggerFactory.getLogger(FimgStoreCreateClient.class);

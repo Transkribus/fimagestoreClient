@@ -10,21 +10,25 @@ import org.dea.fimgstoreclient.FimgStoreDelClient;
 import org.dea.fimgstoreclient.FimgStorePostClient;
 
 public class FimgStorePostClientTest {
-
-	public static void main(String[] args) {
-
+	
+	//Trp Test Doc
+	static String collName = "TrpTestDoc";
+	static String basePath = "/mnt/dea_scratch/TRP/TrpTestDoc/";
+	static String[] fileNames = new String[]{"StAZ-Sign.2-1_001"};//, "StAZ-Sign.2-1_002", "StAZ-Sign.2-1_003"};
+	static String[] fileTypes = new String[]{".jpg"}; //,".xml"};
+	
+	static FimgStorePostClient fiscPo;
+	static FimgStoreDelClient fiscDel;
+	
+	public static void testPostWithTimeout() throws Exception {
+		String file = basePath + fileNames[0] + fileTypes[0];
+		int timeoutMinutes = 1;
 		
-		//Trp Test Doc
-		final String collName = "TrpTestDoc";
-		
-		final String basePath = "/mnt/dea_scratch/TRP/TrpTestDoc/";
-		
-		final String[] fileNames = new String[]{"StAZ-Sign.2-1_001"};//, "StAZ-Sign.2-1_002", "StAZ-Sign.2-1_003"};
-		final String[] fileTypes = new String[]{".jpg"}; //,".xml"};
-		
-		FimgStorePostClient fiscPo = new FimgStorePostClient(Scheme.https, "dbis-thure.uibk.ac.at", "fimagestore", args[0], args[1]);
-//		StringBuffer sb = new StringBuffer();
-		
+		String key = fiscPo.postFile(new File(file), collName, 5, timeoutMinutes);
+		System.out.println("posted file with timeoutMinutes = "+timeoutMinutes+" key = "+key);
+	}
+	
+	public static void testOther() {
 		try {
 			List<String> keys = new ArrayList<>(6);
 			for(String s : fileNames){
@@ -39,7 +43,7 @@ public class FimgStorePostClientTest {
 					System.out.println(ul.getAbsolutePath() + " -> " + key);
 				}
 			}
-			FimgStoreDelClient fiscDel = new FimgStoreDelClient(Scheme.https, "dbis-thure.uibk.ac.at", "fimagestore", args[0], args[1]);
+			
 			for(String key : keys){
 				fiscDel.deleteFile(key, 5);
 			}
@@ -51,7 +55,14 @@ public class FimgStorePostClientTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public static void main(String[] args) throws Exception {
+		fiscPo = new FimgStorePostClient(Scheme.https, "dbis-thure.uibk.ac.at", "fimagestoreTrp", args[0], args[1]);
+		fiscDel = new FimgStoreDelClient(Scheme.https, "dbis-thure.uibk.ac.at", "fimagestoreTrp", args[0], args[1]);
 		
+		testPostWithTimeout();
+//		testOther();
 	}
 
 }
