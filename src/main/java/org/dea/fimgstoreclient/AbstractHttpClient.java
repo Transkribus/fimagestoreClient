@@ -29,8 +29,8 @@ import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractClient {
-	private static final Logger logger = LoggerFactory.getLogger(AbstractClient.class);
+public abstract class AbstractHttpClient {
+	private static final Logger logger = LoggerFactory.getLogger(AbstractHttpClient.class);
 	protected final static String userAgent = "DEA Fimagestore Client 0.1";
 	
 //	protected URIBuilder uriBuilder;
@@ -58,21 +58,21 @@ public abstract class AbstractClient {
 //		this.initialize(Scheme.https, defaultHost, defaultServerContext, creds);
 //	}
 	
-	protected AbstractClient(final String host, final String serverContext) {
+	protected AbstractHttpClient(final String host, final String serverContext) {
 		this.initialize(Scheme.https, host, null, serverContext, null);
 	}
 	
-	protected AbstractClient(final String host, final Integer port, final String serverContext) {
+	protected AbstractHttpClient(final String host, final Integer port, final String serverContext) {
 		this.initialize(Scheme.https, host, port, serverContext, null);
 	}
 	
-	protected AbstractClient(final Scheme scheme, final String host, final Integer port, final String serverContext, String username, String password) {
+	protected AbstractHttpClient(final Scheme scheme, final String host, final Integer port, final String serverContext, String username, String password) {
 		if(username == null || password == null) throw new IllegalArgumentException("Credentials may not be null!");
 		creds = new UsernamePasswordCredentials(username, password);
 		this.initialize(scheme, host, port, serverContext, creds);
 	}
 
-	public AbstractClient(URL url) throws ProtocolException {
+	public AbstractHttpClient(URL url) throws ProtocolException {
 		final String host = url.getHost();
 		
 		final String scheme = url.getProtocol();

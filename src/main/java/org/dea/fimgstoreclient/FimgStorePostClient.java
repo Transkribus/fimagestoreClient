@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * @author philip
  *
  */
-public class FimgStorePostClient extends AbstractClient {
+public class FimgStorePostClient extends AbstractHttpClient {
 	private static final Logger logger = LoggerFactory.getLogger(FimgStorePostClient.class);
 
 	public FimgStorePostClient(Scheme scheme, String host, String serverContext,

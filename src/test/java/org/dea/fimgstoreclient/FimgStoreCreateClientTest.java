@@ -5,7 +5,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dea.fimgstoreclient.AbstractClient.Scheme;
+import org.dea.fimgstoreclient.AbstractHttpClient.Scheme;
 import org.dea.fimgstoreclient.FimgStoreCreateClient;
 import org.dea.fimgstoreclient.FimgStoreGetClient;
 import org.dea.fimgstoreclient.beans.FimgStoreImg;

@@ -36,7 +36,7 @@ import org.xml.sax.SAXException;
  * @author philip
  * 
  */
-public class FimgStoreGetClient extends AbstractClient {
+public class FimgStoreGetClient extends AbstractHttpClient {
 
 	public FimgStoreGetClient(String host, String serverContext) {
 		super(host, serverContext);

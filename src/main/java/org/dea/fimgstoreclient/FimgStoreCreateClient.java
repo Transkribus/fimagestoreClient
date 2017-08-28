@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * Client for creating new versions of already stored objects.
  * @author sebic
  */
-public class FimgStoreCreateClient extends AbstractClient {
+public class FimgStoreCreateClient extends AbstractHttpClient {
 	private static final Logger logger = LoggerFactory.getLogger(FimgStoreCreateClient.class);
 
 	public FimgStoreCreateClient(Scheme scheme, String host, String serverContext,

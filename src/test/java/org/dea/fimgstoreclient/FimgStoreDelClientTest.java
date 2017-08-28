@@ -1,5 +1,5 @@
 package org.dea.fimgstoreclient;
-import org.dea.fimgstoreclient.AbstractClient.Scheme;
+import org.dea.fimgstoreclient.AbstractHttpClient.Scheme;
 import org.dea.fimgstoreclient.FimgStoreDelClient;
 
 public class FimgStoreDelClientTest {

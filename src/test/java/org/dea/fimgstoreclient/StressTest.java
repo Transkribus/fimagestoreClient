@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.apache.http.auth.AuthenticationException;
-import org.dea.fimgstoreclient.AbstractClient.Scheme;
+import org.dea.fimgstoreclient.AbstractHttpClient.Scheme;
 import org.dea.fimgstoreclient.FimgStoreDelClient;
 import org.dea.fimgstoreclient.FimgStoreGetClient;
 import org.dea.fimgstoreclient.FimgStorePostClient;
