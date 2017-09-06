@@ -1,5 +1,6 @@
 package org.dea.fimgstoreclient.beans;
 
+import java.awt.Dimension;
 import java.io.Serializable;
 
 public class FimgStoreImgMd extends FimgStoreFileMd implements Serializable {
@@ -26,6 +27,10 @@ public class FimgStoreImgMd extends FimgStoreFileMd implements Serializable {
 		super();
 	}
 
+	public Dimension getDimension() {
+		return new Dimension(this.getWidth(), this.getHeight());
+	}
+	
 	public int getWidth() {
 		return width;
 	}
@@ -116,5 +121,4 @@ public class FimgStoreImgMd extends FimgStoreFileMd implements Serializable {
 		}
 		return this.stringRep;
 	}
-
 }
