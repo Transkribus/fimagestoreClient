@@ -18,10 +18,10 @@ import org.slf4j.LoggerFactory;
 public class FimgStoreDelClient extends AbstractHttpClient {
 	
 	private static final Logger logger = LoggerFactory.getLogger(FimgStoreDelClient.class);
-
+	
 	public FimgStoreDelClient(Scheme scheme, String host, String serverContext, String username,
 			String password) {
-		super(scheme, host, null, serverContext, username, password);
+		this(scheme, host, null, serverContext, username, password);
 	}
 	
 	public FimgStoreDelClient(Scheme scheme, String host, Integer port, String serverContext, String username,
@@ -39,6 +39,10 @@ public class FimgStoreDelClient extends AbstractHttpClient {
 	 */
 	public boolean deleteFile(final String fileKey, int nrOfRetries) throws IOException, AuthenticationException {
 		logger.debug("deleteFile()");
+		if(FimgStoreConstants.DUMMY_IMAGE_KEY.equals(fileKey)) {
+			//the dummy image will not be deleted. Just pretend it was successful
+			return true;
+		}
 		CloseableHttpResponse response = null;
 		URI uri = uriBuilder.getDeleteUri(fileKey);
 		logger.debug("Calling URL: " + uri.toString());

@@ -28,6 +28,8 @@ public class FimgStoreConstants {
 		public static final String DEL_ACTION_PATH = getString("delActionPath");
 		public static final String CREATE_ACTION_PATH = getString("createActionPath");
 		
+		public static final String DUMMY_IMAGE_KEY = getString("dummyImageKey");
+		
 		public static String getString(String name){
 			return props.getProperty(name);
 		}
