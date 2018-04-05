@@ -13,7 +13,6 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -136,7 +135,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 	 */
 	public FimgStoreImg getImg(final String imgKey) throws IOException {
 		// validate params and build Uri
-		final URI uri = uriBuilder.getFileUri(imgKey);
+		final URI uri = getUriBuilder().getFileUri(imgKey);
 		return getImg(imgKey, uri);
 	}
 
@@ -159,7 +158,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 	 */
 	public FimgStoreImg getImg(final String imgKey, final ImgType type) throws IOException {
 
-		final URI uri = uriBuilder.getImgUri(imgKey, type);
+		final URI uri = getUriBuilder().getImgUri(imgKey, type);
 		FimgStoreImg img = (FimgStoreImg) getImg(imgKey, uri);
 
 		img.setImgType(type);
@@ -168,7 +167,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 	}
 
 	public FimgStoreImg getImgBlackened(String imgKey, List<Point>... polygonPtsList) throws IOException {
-		URI uri = uriBuilder.getImgBlackenedUri(imgKey, polygonPtsList);
+		URI uri = getUriBuilder().getImgBlackenedUri(imgKey, polygonPtsList);
 		return (FimgStoreImg) getImg(imgKey, uri);
 	}
 
@@ -187,7 +186,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 	 */
 	public FimgStoreImg getImgPercScaled(final String imgKey, final int scalePerc) throws IOException {
 
-		final URI uri = uriBuilder.getImgPercScaledUri(imgKey, scalePerc);
+		final URI uri = getUriBuilder().getImgPercScaledUri(imgKey, scalePerc);
 
 		return (FimgStoreImg) getImg(imgKey, uri);
 	}
@@ -213,7 +212,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 	public FimgStoreImg getImgXyScaled(final String imgKey, final int xPixels, final int yPixels,
 			boolean preserveAspect) throws IOException {
 
-		final URI uri = uriBuilder.getImgXyScaledUri(imgKey, xPixels, yPixels, preserveAspect);
+		final URI uri = getUriBuilder().getImgXyScaledUri(imgKey, xPixels, yPixels, preserveAspect);
 		return (FimgStoreImg) getImg(imgKey, uri);
 	}
 
@@ -241,7 +240,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 	public FimgStoreImg getImgCropped(final String imgKey, final int posX, final int posY, final int width,
 			final int height) throws IOException {
 
-		final URI uri = uriBuilder.getImgCroppedUri(imgKey, posX, posY, width, height);
+		final URI uri = getUriBuilder().getImgCroppedUri(imgKey, posX, posY, width, height);
 		return (FimgStoreImg) getImg(imgKey, uri);
 	}
 
@@ -274,7 +273,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 	public FimgStoreImg getImgConv(final String imgKey, final String convertOps, final String convertExt)
 			throws IOException {
 
-		final URI uri = uriBuilder.getImgConvUri(imgKey, convertOps, convertExt);
+		final URI uri = getUriBuilder().getImgConvUri(imgKey, convertOps, convertExt);
 
 		return (FimgStoreImg) getImg(imgKey, uri);
 	}
@@ -294,7 +293,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 		CloseableHttpResponse response = null;
 		InputStream is = null;
 
-		final URI uri = uriBuilder.getImgMdUri(key);
+		final URI uri = getUriBuilder().getImgMdUri(key);
 
 		response = get(uri);
 
@@ -330,7 +329,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 		Document doc = null;
 
 		// validate params and build Uri
-		final URI uri = uriBuilder.getFileUri(fileKey);
+		final URI uri = getUriBuilder().getFileUri(fileKey);
 
 		// System.out.println(uri);
 
@@ -367,7 +366,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 		CloseableHttpResponse response = null;
 		String text = null;
 		// validate params and build Uri
-		final URI uri = uriBuilder.getFileUri(fileKey);
+		final URI uri = getUriBuilder().getFileUri(fileKey);
 
 		response = get(uri);
 
@@ -397,19 +396,19 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 	 */
 
 	public File saveImg(final String key, final ImgType type, final String path) throws IOException {
-		final URI uri = uriBuilder.getImgUri(key, type);
+		final URI uri = getUriBuilder().getImgUri(key, type);
 		File imgFile = saveFile(uri, path);
 		return imgFile;
 	}
 
 	public File saveFile(final String key, final String path) throws IOException {
-		final URI uri = uriBuilder.getFileUri(key);
+		final URI uri = getUriBuilder().getFileUri(key);
 		File file = saveFile(uri, path);
 		return file;
 	}
 
 	public File saveFile(final String key, final String path, final String filename) throws IOException {
-		final URI uri = uriBuilder.getFileUri(key);
+		final URI uri = getUriBuilder().getFileUri(key);
 		File file = saveFile(uri, path, filename);
 		return file;
 	}

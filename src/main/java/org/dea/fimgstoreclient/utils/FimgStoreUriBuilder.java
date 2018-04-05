@@ -1,7 +1,6 @@
 package org.dea.fimgstoreclient.utils;
 
 import java.awt.Point;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;

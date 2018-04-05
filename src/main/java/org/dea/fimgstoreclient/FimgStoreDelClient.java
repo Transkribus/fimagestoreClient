@@ -44,7 +44,7 @@ public class FimgStoreDelClient extends AbstractHttpClient {
 			return true;
 		}
 		CloseableHttpResponse response = null;
-		URI uri = uriBuilder.getDeleteUri(fileKey);
+		URI uri = getUriBuilder().getDeleteUri(fileKey);
 		logger.debug("Calling URL: " + uri.toString());
 		int status;
 		int retries = 0;

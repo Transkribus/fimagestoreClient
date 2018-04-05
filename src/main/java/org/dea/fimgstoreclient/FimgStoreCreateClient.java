@@ -47,7 +47,7 @@ public class FimgStoreCreateClient extends AbstractHttpClient {
 	 */
 	@SafeVarargs
 	public final String createBlackenedImage(String imgKey, String isPartOf, Integer timeout, String replaceKey, List<Point> ...polygonPtsList) throws AuthenticationException, ClientProtocolException, IOException {
-		URI blackenUri = uriBuilder.getImgBlackenedUri(imgKey, polygonPtsList);
+		URI blackenUri = getUriBuilder().getImgBlackenedUri(imgKey, polygonPtsList);
 		
 		return createFile(blackenUri, isPartOf, timeout, replaceKey);
 	}
@@ -68,7 +68,7 @@ public class FimgStoreCreateClient extends AbstractHttpClient {
 	 */
 	public String createFile(URI getUri, String isPartOf, Integer timeout, String replaceKey) throws AuthenticationException, ClientProtocolException, IOException {
 		
-		URI createUri = uriBuilder.getCreateUri(getUri, isPartOf, timeout, replaceKey);
+		URI createUri = getUriBuilder().getCreateUri(getUri, isPartOf, timeout, replaceKey);
 		
 		String key = createFile(createUri, new FimgStoreUploadResponseHandler());
 		

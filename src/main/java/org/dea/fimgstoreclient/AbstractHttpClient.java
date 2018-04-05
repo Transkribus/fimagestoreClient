@@ -42,7 +42,6 @@ public abstract class AbstractHttpClient {
 	protected String host;
 	protected Integer port;
 	protected Scheme scheme;
-	protected FimgStoreUriBuilder uriBuilder;
 	
 	protected Credentials creds = null;
 	
@@ -90,7 +89,6 @@ public abstract class AbstractHttpClient {
 	}
 
 	protected void initialize(final Scheme scheme, final String host, final Integer port, final String serverContext, Credentials creds) {
-		uriBuilder = new FimgStoreUriBuilder(scheme.toString(), host, port, serverContext);
 		//Pooling Http client connection manager is default. Do not set in order to use system properties!
 //		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 //		builder = HttpClients.custom().setConnectionManager(cm);
@@ -211,7 +209,7 @@ public abstract class AbstractHttpClient {
 		if(creds == null){ 
 			throw new IllegalArgumentException("No user credentials are known!");
 		}
-		URI uri = uriBuilder.getPostUri();
+		URI uri = getUriBuilder().getPostUri();
 
 		HttpPost httpPost = new HttpPost(uri);
 		
@@ -278,7 +276,7 @@ public abstract class AbstractHttpClient {
 	}
 	
 	public FimgStoreUriBuilder getUriBuilder(){
-		return uriBuilder;
+		return new FimgStoreUriBuilder(scheme.toString(), host, port, serverContext);
 	}
 
 	public void setProxy(String host, int port){
