@@ -258,7 +258,10 @@ public class FimgStoreUriBuilder {
 			paramsList = new ArrayList<NameValuePair>(1);
 			paramsList.add(params[0]);
 		} else {
-			paramsList = Arrays.asList(params);
+			paramsList = new ArrayList<NameValuePair>(2);
+			for(NameValuePair p : params) {
+				paramsList.add(p);
+			}
 		}
 		paramsList.add(new BasicNameValuePair(FimgStoreConstants.ID_PARAM, fileKey));
 
