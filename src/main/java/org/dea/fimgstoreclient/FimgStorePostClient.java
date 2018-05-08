@@ -13,20 +13,19 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
+import org.dea.fimagestore.core.FImagestoreConst;
+import org.dea.fimagestore.core.util.MimeTypes;
 import org.dea.fimgstoreclient.responsehandler.FimgStoreUploadResponseHandler;
-import org.dea.fimgstoreclient.utils.MimeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Client for posting stuff to the fimagestore.
  * 
- * TODO Batch upload methods
- * 
  * @author philip
  *
  */
-public class FimgStorePostClient extends AbstractHttpClient {
+public class FimgStorePostClient extends AbstractBasicAuthHttpClient {
 	private static final Logger logger = LoggerFactory.getLogger(FimgStorePostClient.class);
 
 	public FimgStorePostClient(Scheme scheme, String host, String serverContext,
@@ -141,10 +140,6 @@ public class FimgStorePostClient extends AbstractHttpClient {
 		//post and return key
 		return postContent(fileBody, isPartOf, key, nrOfRetries, null);
 	}
-
-	private String postContent(ContentBody body, final String isPartOf, final int nrOfRetries) throws IOException, AuthenticationException {
-		return postContent(body, isPartOf, null, nrOfRetries, null);
-	}
 	
 	private String postContent(ContentBody body, final String isPartOf, final String key, int nrOfRetries, Integer timeoutMinutes) throws IOException, AuthenticationException {
 
@@ -162,21 +157,21 @@ public class FimgStorePostClient extends AbstractHttpClient {
 		// add is_part_of:
 		if(isPartOf != null){
 			final StringBody stringBody = new StringBody(isPartOf, ContentType.TEXT_PLAIN);
-			entBuilder.addPart(FimgStoreConstants.PART_OF_VAR_NAME, stringBody);
+			entBuilder.addPart(FImagestoreConst.IS_PART_OF_FIELD_NAME, stringBody);
 		}
 		
 		if(key != null){
 			// replace file. set parameter...
 			final StringBody stringBody = new StringBody(key, ContentType.TEXT_PLAIN);
-			entBuilder.addPart(FimgStoreConstants.REPLACE_ID_VAR_NAME, stringBody);
+			entBuilder.addPart(FImagestoreConst.REPLACE_ID_FIELD_NAME, stringBody);
 		}
 		
 		if (timeoutMinutes != null) {
-			entBuilder.addPart(FimgStoreConstants.TIMEOUT_PARAM, new StringBody(""+timeoutMinutes, ContentType.TEXT_PLAIN));
+			entBuilder.addPart(FImagestoreConst.TIMEOUT_FIELD_NAME, new StringBody(""+timeoutMinutes, ContentType.TEXT_PLAIN));
 		}
 		
 		// add content
-		entBuilder.addPart(FimgStoreConstants.FILE_VAR_NAME, body);
+		entBuilder.addPart(FImagestoreConst.FILE_FIELD_NAME, body);
 
 		// post stuff and get the file key
 		ResponseHandler<String> responseHandler = new FimgStoreUploadResponseHandler();

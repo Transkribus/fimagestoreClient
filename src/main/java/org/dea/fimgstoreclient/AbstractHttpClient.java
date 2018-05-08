@@ -5,26 +5,26 @@ import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URL;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.AuthenticationException;
-import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.ProxyAuthenticationStrategy;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,76 +32,51 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractHttpClient {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractHttpClient.class);
 	protected final static String userAgent = "DEA Fimagestore Client 0.1";
-	
-//	protected URIBuilder uriBuilder;
-//	private static CloseableHttpClient httpClient;
-	protected static HttpClientBuilder builder;
-	protected static HttpClientContext context;
+
+	protected HttpClientBuilder builder;
+	protected HttpClientContext context;
 	
 	protected String serverContext;
 	protected String host;
-	protected Integer port;
+	protected Integer port = null;
 	protected Scheme scheme;
 	
-	protected Credentials creds = null;
-	
-//	private AuthCache authCache = new BasicAuthCache();
-	private AuthScope scope = null;
-
-//	/**
-//	 * Create client with default host (dbis-thure) using https
-//	 */
-//	protected AbstractClient() {
-////		creds = new UsernamePasswordCredentials(Constants.getString("username"), Constants.getString("pw"));
-//		creds = new UsernamePasswordCredentials("", "");
-//		this.initialize(Scheme.https, defaultHost, defaultServerContext, creds);
-//	}
-	
 	protected AbstractHttpClient(final String host, final String serverContext) {
-		this.initialize(Scheme.https, host, null, serverContext, null);
+		this(Scheme.https, host, null, serverContext);
 	}
 	
 	protected AbstractHttpClient(final String host, final Integer port, final String serverContext) {
-		this.initialize(Scheme.https, host, port, serverContext, null);
-	}
-	
-	protected AbstractHttpClient(final Scheme scheme, final String host, final Integer port, final String serverContext, String username, String password) {
-		if(username == null || password == null) throw new IllegalArgumentException("Credentials may not be null!");
-		creds = new UsernamePasswordCredentials(username, password);
-		this.initialize(scheme, host, port, serverContext, creds);
+		this(Scheme.https, host, port, serverContext);
 	}
 
 	public AbstractHttpClient(URL url) throws ProtocolException {
-		final String host = url.getHost();
-		
+		this();
 		final String scheme = url.getProtocol();
-		
 		if(!scheme.equals("http") && !scheme.equals("https")){
 			throw new ProtocolException("Constructor not applicable for protocol: " + scheme);
 		}
-		
-		// -1 OR 80 OR 443 => ignore
-//		final int port = url.getPort();
-			
+		this.scheme = Scheme.https; //FIXME http not supported in this constructor!
+		this.host = url.getHost();			
 		final String path = url.getPath();
-		final String serverContext = path.substring(0, path.lastIndexOf('/'));
-		this.initialize(Scheme.https, host, null, serverContext, null);
+		this.serverContext = path.substring(0, path.lastIndexOf('/'));		
 	}
-
-	protected void initialize(final Scheme scheme, final String host, final Integer port, final String serverContext, Credentials creds) {
-		//Pooling Http client connection manager is default. Do not set in order to use system properties!
-//		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-//		builder = HttpClients.custom().setConnectionManager(cm);
-		// use system properties, such as proxy settings
-		builder = HttpClients.custom().useSystemProperties();
-		builder.setUserAgent(userAgent);		
-		
-		context = HttpClientContext.create();
+	
+	protected AbstractHttpClient(final Scheme scheme, final String host, final Integer port, final String serverContext) {
+		this();
 		this.scheme = scheme;
 		this.host = host;
 		this.port = port;
 		this.serverContext = serverContext;
-		this.creds = creds;
+	}
+
+	private AbstractHttpClient() {
+		//Pooling Http client connection manager is default. Do not set in order to use system properties!
+//		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+//		builder = HttpClients.custom().setConnectionManager(cm);
+		// use system properties, such as proxy settings
+		builder = initClientBuilder(false);
+		context = HttpClientContext.create();
+		
 		
 		/* not possible with CloseableHttpClient… check alternatives
 		if(Constants.getBool("doRetry")){
@@ -111,25 +86,19 @@ public abstract class AbstractHttpClient {
 			httpClient.setHttpRequestRetryHandler(retryHandler);
 		}
 		*/
-		
-		if (this.scheme.equals(Scheme.https) && creds != null) {
-			scope = new AuthScope(host, 443);
-			CredentialsProvider credsProvider = new BasicCredentialsProvider();
-			credsProvider.setCredentials(scope, creds);
-			context.setCredentialsProvider(credsProvider);		
-		}
 	}
 
-//	protected void finalize() {
-//		if (httpClient != null) {
-//			try {
-//				httpClient.close();
-//			} catch (IOException e) {
-//				// ignore this
-//				e.printStackTrace();
-//			}
-//		}
-//	}
+	private HttpClientBuilder initClientBuilder(boolean doPooling) {
+		HttpClientBuilder builder = HttpClients.custom().useSystemProperties();
+		builder.setUserAgent(userAgent);
+		
+		if(doPooling) {
+			HttpClientConnectionManager connMgr = buildDefaultPooledConnectionManager();
+			this.builder.setConnectionManager(connMgr);
+		}
+		
+		return builder;
+	}
 
 	/**
 	 * Perform HTTP GET and check status code in response. Response is returned and content handled outside.
@@ -155,44 +124,25 @@ public abstract class AbstractHttpClient {
 	}
 	
 	/**
-	 * Perform HTTPS GET (with authentication) and check status code in response. Response is returned and content handled outside.
+	 * Perform HTTP DELETE and check status code in response. Response is returned and content handled outside.
 	 * 
 	 * @param uri the fimagestore URI to an object
 	 * @return the response
 	 * @throws IOException
 	 *             if status code is not 200
-	 * @throws AuthenticationException if authentication fails
 	 */
-	protected CloseableHttpResponse getAndAuthenticate(URI uri) throws IOException, AuthenticationException {
-		if(creds == null){ 
-			throw new IllegalArgumentException("No user credentials are known!");
-		}
-		
-		HttpGet httpget = new HttpGet(uri);
-		
-		if(this.scheme.equals(Scheme.https)){
-			BasicScheme authScheme = new BasicScheme();
-			//authenticate. Header is added automatically by this call
-
-			Header authHeader = authScheme.authenticate(creds, httpget, context);
-			
-//			logger.debug("AuthHeader " + authHeader.getName() + ": " + authHeader.getValue());
-			httpget.setHeader(authHeader);
-//			for(Header h : httpget.getAllHeaders()){
-//				logger.debug("Header " + h.getName() + ": " + h.getValue());
-//			}
-			
-		}
+	protected CloseableHttpResponse delete(URI uri) throws IOException {
+		HttpDelete httpDel = new HttpDelete(uri);
 		CloseableHttpClient httpClient = builder.build();
-		CloseableHttpResponse response = httpClient.execute(httpget, context);
-		logger.debug("Request executed!");
+		CloseableHttpResponse response = httpClient.execute(httpDel, context);
 		//DO NOT CLOSE or connection pool will shut down (httpClient 4.4)
 //		httpClient.close();
 		if (response.getStatusLine().getStatusCode() >= 300) {
 			final String statusLine = response.getStatusLine().toString();
-			logger.debug("Error on HTTP GET " + uri.toString() + "! "
+			logger.debug("Error while getting " + uri.toString() + "! "
 					+ statusLine);
 		}
+		
 		return response;
 	}
 
@@ -206,32 +156,15 @@ public abstract class AbstractHttpClient {
 	 * @throws AuthenticationException if authentication fails
 	 */
 	protected String post(HttpEntity entity, ResponseHandler<String> responseHandler) throws IOException, AuthenticationException {
-		if(creds == null){ 
-			throw new IllegalArgumentException("No user credentials are known!");
-		}
 		URI uri = getUriBuilder().getPostUri();
 
 		HttpPost httpPost = new HttpPost(uri);
 		
+		logger.debug("POST: " + uri.toString());
+		
 		// send and get response:
 		httpPost.setEntity(entity);
 		
-		logger.debug("POST: " + uri.toString());
-//		logger.debug("Using scheme: " + this.scheme.toString());
-		logger.debug("FimgStore user: " + creds.getUserPrincipal());
-		
-		if(this.scheme.equals(Scheme.https)){
-			BasicScheme authScheme = new BasicScheme();
-			//authenticate. Header is (or should be! FIXME) added automatically by this call
-			Header authHeader = authScheme.authenticate(creds, httpPost, context);
-			
-//			logger.debug("AuthHeader " + authHeader.getName() + ": " + authHeader.getValue());
-			httpPost.setHeader(authHeader);
-//			for(Header h : httpPost.getAllHeaders()){
-//				logger.debug("Header " + h.getName() + ": " + h.getValue());
-//			}
-			
-		}
 		CloseableHttpClient httpClient = builder.build();
 		final String result = httpClient.execute(httpPost, responseHandler, context);
 		logger.debug("Upload done: " + result);
@@ -239,17 +172,8 @@ public abstract class AbstractHttpClient {
 //		httpClient.close();
 		return result;
 	}
-
-	/**
-	 * Causes the client to be reinitialized with the specified scheme and old host/user/pw.
-	 *  
-	 * @param scheme either http or https
-	 */
-	public void setScheme(Scheme scheme) {
-		// reinitialize the client
-		this.initialize(scheme, host, port, serverContext, creds);
-	}
-
+	
+	
 	/**
 	 * Get info on the used scheme
 	 * 
@@ -270,7 +194,7 @@ public abstract class AbstractHttpClient {
 	public Integer getPort() {
 		return port;
 	}
-
+	
 	public enum Scheme {
 		http, https;
 	}
@@ -300,4 +224,19 @@ public abstract class AbstractHttpClient {
 		}
 	}
 	
+	protected HttpClientConnectionManager buildDefaultPooledConnectionManager() {
+		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+		// Increase max total connection to 200
+		cm.setMaxTotal(200);
+		// Increase default max connection per route to 20
+		cm.setDefaultMaxPerRoute(20);
+		// Increase max connections for localhost:80 to 50
+		HttpHost httpHost = new HttpHost(host, port);
+		cm.setMaxPerRoute(new HttpRoute(httpHost), 50);
+		return cm;
+	}
+	
+	public void enablePooling(boolean enabled) {
+		this.builder = initClientBuilder(enabled);
+	}
 }

@@ -5,12 +5,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import org.apache.http.Header;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.dea.fimgstoreclient.responsehandler.FimgStoreUploadResponseHandler;
 import org.slf4j.Logger;
@@ -20,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * Client for creating new versions of already stored objects.
  * @author sebic
  */
-public class FimgStoreCreateClient extends AbstractHttpClient {
+public class FimgStoreCreateClient extends AbstractBasicAuthHttpClient {
 	private static final Logger logger = LoggerFactory.getLogger(FimgStoreCreateClient.class);
 
 	public FimgStoreCreateClient(Scheme scheme, String host, String serverContext,
@@ -79,21 +77,8 @@ public class FimgStoreCreateClient extends AbstractHttpClient {
 		HttpPut httpPut = new HttpPut(createUri);
 				
 		logger.debug("PUT: " + createUri.toString());
-//		logger.debug("Using scheme: " + this.scheme.toString());
-		logger.debug("FimgStore user: " + creds.getUserPrincipal());
-		
-		if(this.scheme.equals(Scheme.https)) {
-			BasicScheme authScheme = new BasicScheme();
-			//authenticate. Header is (or should be! FIXME) added automatically by this call
-			Header authHeader = authScheme.authenticate(creds, httpPut, context);
-			
-//			logger.debug("AuthHeader " + authHeader.getName() + ": " + authHeader.getValue());
-			httpPut.setHeader(authHeader);
-//			for(Header h : httpPost.getAllHeaders()){
-//				logger.debug("Header " + h.getName() + ": " + h.getValue());
-//			}
-			
-		}
+		//log username
+		hasCreds(host, port);	
 		
 		CloseableHttpClient httpClient = builder.build();
 		final String result = httpClient.execute(httpPut, responseHandler, context);

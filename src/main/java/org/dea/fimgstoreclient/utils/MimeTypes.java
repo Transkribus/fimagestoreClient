@@ -1,5 +1,3 @@
-package org.dea.fimgstoreclient.utils;
-
 /*******************************************************************************
  * Copyright (c) 2013 DEA.
  * All rights reserved. This program and the accompanying materials
@@ -10,19 +8,20 @@ package org.dea.fimgstoreclient.utils;
  * Contributors:
  *     DEA - initial API and implementation
  ******************************************************************************/
+package org.dea.fimgstoreclient.utils;
+
+//Copyright (c) 2003-2009, Jodd Team (jodd.org). All Rights Reserved.
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Taken from package org.dea.imagestore.img <br>
- * 
- * Based on lookup routine Copyright (c) 2003-2009, Jodd Team (jodd.org). All
- * Rights Reserved. <br>
- * 
- * Map file extensions to MIME types. Based on the Apache mime.types file. <br>
+ * Map file extensions to MIME types. Based on the Apache mime.types file.
  * http://www.iana.org/assignments/media-types/
+ * 
+ * Use the class from fimagestore-core!
  */
+@Deprecated
 public class MimeTypes {
 
 	public static final String MIME_APPLICATION_ANDREW_INSET = "application/andrew-inset";
@@ -139,8 +138,6 @@ public class MimeTypes {
 
 	static {
 		mimeTypeMapping = new HashMap<String, String>(200) {
-			private static final long serialVersionUID = 1L;
-
 			private void put1(String key, String value) {
 				if (put(key, value) != null) {
 					throw new IllegalArgumentException("Duplicated extension: " + key);
@@ -325,12 +322,9 @@ public class MimeTypes {
 
 	}
 
-	
 	/**
 	 * Registers MIME type for provided extension. Existing extension type will
 	 * be overriden.
-	 * @param ext the extension to register
-	 * @param mimeType the mimetype the extension will be registered to
 	 */
 	public static void registerMimeType(String ext, String mimeType) {
 		mimeTypeMapping.put(ext, mimeType);
@@ -339,8 +333,6 @@ public class MimeTypes {
 	/**
 	 * Returns the corresponding MIME type to the given extension. If no MIME
 	 * type was found it returns 'application/octet-stream' type.
-	 * @param ext the extension to resolve
-	 * @return the mimetype
 	 */
 	public static String getMimeType(String ext) {
 		String mimeType = lookupMimeType(ext);
@@ -352,18 +344,14 @@ public class MimeTypes {
 
 	/**
 	 * Simply returns MIME type or <code>null</code> if no type is found.
-	 * @param ext the extension to resolve
-	 * @return the mimetype or <code>null</code>
 	 */
 	private static String lookupMimeType(String ext) {
 		return mimeTypeMapping.get(ext.toLowerCase());
 	}
 
 	/**
-	 * * Returns the extension for a given mime type or <code>null</code> if not
+	 * Returns the extension for a given mime type or <code>null</code> if not
 	 * found.
-	 * @param mimeType the mimetype to resolve
-	 * @return the extension
 	 */
 	public static String lookupExtension(String mimeType) {
 		for (Map.Entry<String, String> e : mimeTypeMapping.entrySet()) {
@@ -378,10 +366,6 @@ public class MimeTypes {
 
 	public static boolean isImageMimeTypeBrowserCompatible(String mimeType) {
 		return (mimeType.equals(MIME_IMAGE_JPEG) || mimeType.equals(MIME_IMAGE_PNG));
-	}
-	
-	public static boolean isTiffOrPng(String mimeType) {
-		return (mimeType.equals(MIME_IMAGE_TIFF) || mimeType.equals(MIME_IMAGE_PNG));
 	}
 
 	public static void main(String[] args) {

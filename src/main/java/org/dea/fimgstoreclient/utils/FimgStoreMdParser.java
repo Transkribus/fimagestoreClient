@@ -3,16 +3,14 @@ package org.dea.fimgstoreclient.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
+import org.dea.fimagestore.core.FImagestoreConst;
 import org.dea.fimgstoreclient.beans.FimgStoreFileMd;
 import org.dea.fimgstoreclient.beans.FimgStoreImgMd;
 
 public class FimgStoreMdParser {
-	//from org.dea.imagestore.img.UploadedImageMetadata.DATE_FORMAT
-	private static final String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
 	// Key = DYQLMRPHLXBKCQFRXBMKXRTF
 	// OrigFilename = wp54808274x-00044.tif
 	// IsPartOf =
@@ -108,8 +106,8 @@ public class FimgStoreMdParser {
 	}
 	
 	private static Date parseDate(final String value) throws ParseException{
-		if(value != null && value.length() == DATE_FORMAT.length()){
-			return new SimpleDateFormat(DATE_FORMAT).parse(value);
+		if(value != null && value.length() == FImagestoreConst.DATE_FORMAT_STR.length()){
+			return FImagestoreConst.DATE_FORMAT.parse(value);
 		} else { return null; }
 	}
 	

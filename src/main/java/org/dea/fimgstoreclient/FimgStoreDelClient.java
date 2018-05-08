@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author philip
  * 
  */
-public class FimgStoreDelClient extends AbstractHttpClient {
+public class FimgStoreDelClient extends AbstractBasicAuthHttpClient {
 	
 	private static final Logger logger = LoggerFactory.getLogger(FimgStoreDelClient.class);
 	
@@ -39,7 +39,7 @@ public class FimgStoreDelClient extends AbstractHttpClient {
 	 */
 	public boolean deleteFile(final String fileKey, int nrOfRetries) throws IOException, AuthenticationException {
 		logger.debug("deleteFile()");
-		if(FimgStoreConstants.DUMMY_IMAGE_KEY.equals(fileKey)) {
+		if(FImagestoreClientConfig.DUMMY_IMAGE_KEY.equals(fileKey)) {
 			//the dummy image will not be deleted. Just pretend it was successful
 			return true;
 		}
@@ -60,7 +60,7 @@ public class FimgStoreDelClient extends AbstractHttpClient {
 				}
 			}
 			try {
-				response = getAndAuthenticate(uri);
+				response = delete(uri);
 				status = response.getStatusLine().getStatusCode();
 				logger.debug("Response: " + response.getStatusLine().toString());
 				throwup = null;
