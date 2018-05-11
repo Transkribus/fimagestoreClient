@@ -2,15 +2,17 @@ package org.dea.fimgstoreclient.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.util.Date;
+import java.text.DateFormat;
 import java.util.Properties;
 
 import org.dea.fimagestore.core.FImagestoreConst;
 import org.dea.fimgstoreclient.beans.FimgStoreFileMd;
 import org.dea.fimgstoreclient.beans.FimgStoreImgMd;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FimgStoreMdParser {
+	private static final Logger logger = LoggerFactory.getLogger(FimgStoreMdParser.class);
 	// Key = DYQLMRPHLXBKCQFRXBMKXRTF
 	// OrigFilename = wp54808274x-00044.tif
 	// IsPartOf =
@@ -54,6 +56,8 @@ public class FimgStoreMdParser {
 	 */
 	public static FimgStoreFileMd parse(InputStream is) throws IOException {
 		FimgStoreImgMd md = null;
+		DateFormat df = FImagestoreConst.newDateFormat();
+		
 		
 		Properties props = new Properties();
 		props.load(is);
@@ -61,10 +65,10 @@ public class FimgStoreMdParser {
 		md.setFileName(props.getProperty(FILENAME));
 		md.setPartOf(props.getProperty(PART_OF));
 		try{
-			md.setUploadDate(parseDate(props.getProperty(UL_DATE)));
-		} catch (ParseException pe) {
-			pe.printStackTrace();
-			throw new IOException("Strange date format: " + props.getProperty(UL_DATE) + ". Check org.dea.imagestore.img.UploadedImageMetadata.DATE_FORMAT");
+			md.setUploadDate(df.parse(props.getProperty(UL_DATE)));
+		} catch (Exception pe) {
+			logger.warn(md.getKey() + ": Encountered strange date format: " + props.getProperty(UL_DATE), pe);
+			throw new IOException("Strange date format: " + props.getProperty(UL_DATE) + ". Check org.dea.imagestore.img.UploadedImageMetadata.DATE_FORMAT", pe);
 		}
 		md.setIP(props.getProperty(IP));
 		md.setUser(props.getProperty(USER));
@@ -103,12 +107,6 @@ public class FimgStoreMdParser {
 		} else {
 			return null;
 		}
-	}
-	
-	private static Date parseDate(final String value) throws ParseException{
-		if(value != null && value.length() == FImagestoreConst.DATE_FORMAT_STR.length()){
-			return FImagestoreConst.DATE_FORMAT.parse(value);
-		} else { return null; }
 	}
 	
 	public static boolean isImage(String mimetype) {
