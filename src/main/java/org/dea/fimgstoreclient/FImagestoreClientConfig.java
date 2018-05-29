@@ -20,8 +20,6 @@ import org.slf4j.LoggerFactory;
 @Deprecated
 public class FImagestoreClientConfig {
 		private static final Logger logger = LoggerFactory.getLogger(FImagestoreClientConfig.class);
-		private static Properties props = loadDefault();
-		
 		/**
 		 * Default config file "{@value FImagestoreConfig#DEFAULT_PROPS_FILE_NAME}" is loaded from classpath by default mainly to not require explicit loading in unit tests.<br/>
 		 * webapp will load its config specifically during initialization.  
@@ -31,6 +29,8 @@ public class FImagestoreClientConfig {
 		 * If a specific properties file is successfully loaded currentPropFileName will store its name for further reference
 		 */
 		private static String currentPropFileName = DEFAULT_PROPS_FILE_NAME;	
+		
+		private static Properties props = loadDefault();
 		
 		public static final String DUMMY_IMAGE_KEY = getProperty("dummyImageKey");
 		

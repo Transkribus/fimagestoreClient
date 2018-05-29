@@ -115,9 +115,8 @@ public abstract class AbstractHttpClient {
 		//DO NOT CLOSE or connection pool will shut down (httpClient 4.4)
 //		httpClient.close();
 		if (response.getStatusLine().getStatusCode() >= 300) {
-			final String statusLine = response.getStatusLine().toString();
-			logger.debug("Error while getting " + uri.toString() + "! "
-					+ statusLine);
+			throw new IOException("Error while getting " + uri.toString() + ": " 
+					+ response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
 		}
 		
 		return response;
