@@ -47,6 +47,7 @@ public class FimgStoreMdParser {
 	 private static final String BITS = "Bitdepth";
 	 private static final String NCOMPONENTS = "NComponents";
 	 private static final String COMPR = "Compression";
+	 private static final String ORIENTATION = "Orientation";
 	
 	/**
 	 * Parses the InputStream for FileMetadata and determines whether to return a Image or FileMetadata Object
@@ -76,6 +77,7 @@ public class FimgStoreMdParser {
 		md.setMimetype(props.getProperty(MIMETYPE));
 		md.setSize(parseInt(props.getProperty(SIZE)));
 		md.setChecksum(props.getProperty(CHECKSUM));
+		md.setOrientation(props.getProperty(ORIENTATION));
 				
 		if(!isImage(props.getProperty(MIMETYPE))){
 			return (FimgStoreFileMd)md;

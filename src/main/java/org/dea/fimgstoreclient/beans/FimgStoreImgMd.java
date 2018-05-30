@@ -14,6 +14,7 @@ public class FimgStoreImgMd extends FimgStoreFileMd implements Serializable {
 	protected int bitdepth;
 	protected int nComponents;
 	protected String compression;
+	protected String orientation;
 
 	public FimgStoreImgMd(String key) {
 		super(key);
@@ -85,6 +86,14 @@ public class FimgStoreImgMd extends FimgStoreFileMd implements Serializable {
 
 	public void setCompression(String compression) {
 		this.compression = compression;
+	}
+
+	public String getOrientation() {
+		return orientation;
+	}
+
+	public void setOrientation(String orientation) {
+		this.orientation = orientation;
 	}
 
 	@Override
