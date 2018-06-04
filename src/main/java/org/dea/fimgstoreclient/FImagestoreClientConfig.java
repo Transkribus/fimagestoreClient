@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Not needed anymore as now constants from fimagestore-core are used
  * 
+ * Single remaining property: dummy image key
  * TODO how to manage filekeys that are forbidden to delete? e.g. symbolic image for broken files in transkribus
  * 
  * @author philip
@@ -21,7 +22,8 @@ import org.slf4j.LoggerFactory;
 public class FImagestoreClientConfig {
 		private static final Logger logger = LoggerFactory.getLogger(FImagestoreClientConfig.class);
 		/**
-		 * Default config file "{@value FImagestoreConfig#DEFAULT_PROPS_FILE_NAME}" is loaded from classpath by default mainly to not require explicit loading in unit tests.<br/>
+		 * Default config file "{@value FImagestoreConfig#DEFAULT_PROPS_FILE_NAME}" is 
+		 * loaded from classpath by default mainly to not require explicit loading in unit tests.<br/>
 		 * webapp will load its config specifically during initialization.  
 		 */
 		private static final String DEFAULT_PROPS_FILE_NAME = "FimgStoreClient.properties";

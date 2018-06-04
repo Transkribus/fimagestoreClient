@@ -123,7 +123,8 @@ public class FimgStoreImgMd extends FimgStoreFileMd implements Serializable {
 			sb.append("yResolution=" + yResolution + "\n");
 			sb.append("bitdepth=" + bitdepth + "\n");
 			sb.append("nComponents=" + nComponents + "\n");
-			sb.append("compression=" + compression);
+			sb.append("compression=" + compression + "\n");
+			sb.append("orientation=" + orientation);
 			sb.append("\n=======================================");
 			stringRep = sb.toString();
 			isAltered = false;
