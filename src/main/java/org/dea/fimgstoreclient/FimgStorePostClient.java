@@ -152,6 +152,7 @@ public class FimgStorePostClient extends AbstractBasicAuthHttpClient {
 
 		// browser-compatible mode, i.e. only write Content-Disposition; use
 		// content charset
+		logger.debug("Setting MultiPartMode: " + HttpMultipartMode.BROWSER_COMPATIBLE);
 		entBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 		// add is_part_of:
@@ -211,6 +212,8 @@ public class FimgStorePostClient extends AbstractBasicAuthHttpClient {
 		if (mimeType == null) {
 			throw new IOException("Unknown extension: " + fileName);
 		}
+		//attempt to fix #3. does not work
+//		return ContentType.create(mimeType, StandardCharsets.UTF_8);
 		return ContentType.create(mimeType);
 	}
 }

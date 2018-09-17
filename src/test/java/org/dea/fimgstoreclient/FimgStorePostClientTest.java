@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.auth.AuthenticationException;
+import org.dea.fimagestore.core.util.SebisStopWatch.SSW;
 import org.dea.fimgstoreclient.AbstractHttpClient.Scheme;
-import org.dea.fimgstoreclient.FimgStoreDelClient;
-import org.dea.fimgstoreclient.FimgStorePostClient;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FimgStorePostClientTest {
-	
+	Logger logger = LoggerFactory.getLogger(FimgStorePostClientTest.class);
 	//Trp Test Doc
 	static String collName = "TrpTestDoc";
 	static String basePath = "/mnt/dea_scratch/TRP/TrpTestDoc/";
@@ -54,6 +56,47 @@ public class FimgStorePostClientTest {
 		} catch (AuthenticationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testPost() {
+		
+		SSW sw = new SSW();
+			
+		File f = new File("/mnt/dea_scratch/TRP/Bentham_box_002/002_080_001.jpg");
+		
+//		sw.start();
+//		postAndDelete(Scheme.http, "dea-moe.uibk.ac.at", 8081, "/fimagestore", "Transcript", "Munuti81", f);
+//		sw.stop("dea-moe http post and delete", logger);
+		
+		sw.start();
+		postAndDelete(Scheme.https, "dbis-thure.uibk.ac.at", 443, "/fimagestoreTest", "Transcript", "Munuti81", f);
+		sw.stop("dbis-thure post and delete", logger);
+		
+//		sw.start();
+//		postAndDelete(Scheme.https, "files-test.transkribus.eu", 443, "/", "Transcript", "Munuti81", f);
+//		sw.stop("files-test.transkribus.eu post and delete", logger);
+		
+	}
+	
+	private void postAndDelete(Scheme scheme, String host, int port, String context, String user, String pw, File testFile) {
+		FimgStorePostClient poster = new FimgStorePostClient(scheme, host, port, context, user, pw);
+		
+		String key = null;
+		try {
+			key = poster.postFile(testFile, "http-client test", 2);
+		} catch (AuthenticationException | IOException e) {
+			e.printStackTrace();
+		}		
+		
+		if(key != null) {
+			FimgStoreDelClient deller = new FimgStoreDelClient(scheme, host, port, context, user, pw);
+			try {
+				deller.deleteFile(key, 2);
+			} catch (AuthenticationException | IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
