@@ -2,6 +2,7 @@ package org.dea.fimgstoreclient;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.http.auth.AuthenticationException;
@@ -148,12 +149,7 @@ public class FimgStorePostClient extends AbstractBasicAuthHttpClient {
 		}
 
 		// create multipart message:
-		MultipartEntityBuilder entBuilder = MultipartEntityBuilder.create();
-
-		// browser-compatible mode, i.e. only write Content-Disposition; use
-		// content charset
-		logger.debug("Setting MultiPartMode: " + HttpMultipartMode.BROWSER_COMPATIBLE);
-		entBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+		MultipartEntityBuilder entBuilder = newMultipartEntityBuilder();
 
 		// add is_part_of:
 		if(isPartOf != null){
@@ -206,14 +202,24 @@ public class FimgStorePostClient extends AbstractBasicAuthHttpClient {
 		return response;
 	}
 
+	private MultipartEntityBuilder newMultipartEntityBuilder() {
+		MultipartEntityBuilder entBuilder = MultipartEntityBuilder.create();
+
+		// browser-compatible mode, i.e. only write Content-Disposition; use
+		// content charset
+		logger.debug("Setting MultiPartMode: " + HttpMultipartMode.BROWSER_COMPATIBLE);
+		entBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+		entBuilder.setCharset(DEFAULT_CHARSET);
+		return entBuilder;
+	}
+
 	private ContentType getContentType(final String fileName) throws IOException {
 		final String extension = FilenameUtils.getExtension(fileName);
 		final String mimeType = MimeTypes.getMimeType(extension);
 		if (mimeType == null) {
 			throw new IOException("Unknown extension: " + fileName);
 		}
-		//attempt to fix #3. does not work
-//		return ContentType.create(mimeType, StandardCharsets.UTF_8);
-		return ContentType.create(mimeType);
+		//attach charset which is UTF-8 for all Transkribus apps
+		return ContentType.create(mimeType, DEFAULT_CHARSET);
 	}
 }

@@ -309,7 +309,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 			is = entity.getContent();
 		}
 
-		FimgStoreFileMd md = FimgStoreMdParser.parse(is);
+		FimgStoreFileMd md = FimgStoreMdParser.parse(is, DEFAULT_CHARSET);
 		md.setUri(uri);
 		EntityUtils.consume(entity);
 		response.close();

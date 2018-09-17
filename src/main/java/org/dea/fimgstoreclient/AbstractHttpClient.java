@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -33,6 +35,8 @@ public abstract class AbstractHttpClient implements AutoCloseable {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractHttpClient.class);
 	protected final static String userAgent = "DEA Fimagestore Client 0.3";
 
+	protected final static Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+	
 	protected final HttpClientBuilder builder;
 	protected final HttpClientContext context;
 	private CloseableHttpClient httpClient = null;

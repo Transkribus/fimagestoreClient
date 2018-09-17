@@ -2,6 +2,8 @@ package org.dea.fimgstoreclient.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.util.Properties;
 
@@ -55,13 +57,13 @@ public class FimgStoreMdParser {
 	 * @return {@link FimgStoreImgMd} or {@link FimgStoreFileMd}
 	 * @throws IOException if network error occurs or stream can't be read
 	 */
-	public static FimgStoreFileMd parse(InputStream is) throws IOException {
+	public static FimgStoreFileMd parse(InputStream is, Charset charset) throws IOException {
 		FimgStoreImgMd md = null;
 		DateFormat df = FImagestoreConst.newDateFormat();
-		
+		InputStreamReader reader = new InputStreamReader(is, charset);
 		
 		Properties props = new Properties();
-		props.load(is);
+		props.load(reader);
 		md = new FimgStoreImgMd(props.getProperty(KEY));
 		md.setFileName(props.getProperty(FILENAME));
 		md.setPartOf(props.getProperty(PART_OF));
