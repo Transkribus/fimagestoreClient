@@ -29,17 +29,24 @@ import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractHttpClient {
+public abstract class AbstractHttpClient implements AutoCloseable {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractHttpClient.class);
-	protected final static String userAgent = "DEA Fimagestore Client 0.1";
+	protected final static String userAgent = "DEA Fimagestore Client 0.3";
 
-	protected HttpClientBuilder builder;
-	protected HttpClientContext context;
+	protected final HttpClientBuilder builder;
+	protected final HttpClientContext context;
+	private CloseableHttpClient httpClient = null;
 	
 	protected String serverContext;
 	protected String host;
-	protected Integer port = null;
+	protected int port;
 	protected Scheme scheme;
+	
+	/**
+	 * If set to false, each request will be executed using a new CloseableHttpClient instance as it was since v0.1, if true one instance will be reused.<br> 
+	 * Current docs for apache http client say that reuse is better. So this is here for doing a comparison test.
+	 */
+	private boolean REUSE_HTTP_CLIENT_INSTANCE = false;
 	
 	protected AbstractHttpClient(final String host, final String serverContext) {
 		this(Scheme.https, host, null, serverContext);
@@ -58,23 +65,28 @@ public abstract class AbstractHttpClient {
 		this.scheme = Scheme.https; //FIXME http not supported in this constructor!
 		this.host = url.getHost();			
 		final String path = url.getPath();
-		this.serverContext = path.substring(0, path.lastIndexOf('/'));		
+		this.serverContext = path.substring(0, path.lastIndexOf('/'));	
+		enablePooling();
 	}
 	
 	protected AbstractHttpClient(final Scheme scheme, final String host, final Integer port, final String serverContext) {
 		this();
-		this.scheme = scheme;
+		if(scheme == null) {
+			logger.warn("Null was passed as URI scheme! Defaulting to https.");
+			this.scheme = Scheme.https;
+		} else {
+			this.scheme = scheme;
+		}
 		this.host = host;
-		this.port = port;
+		this.port = port != null ? port : AuthScope.ANY_PORT;
 		this.serverContext = serverContext;
+		enablePooling();
 	}
 
 	private AbstractHttpClient() {
-		//Pooling Http client connection manager is default. Do not set in order to use system properties!
-//		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-//		builder = HttpClients.custom().setConnectionManager(cm);
+		
 		// use system properties, such as proxy settings
-		builder = initClientBuilder(false);
+		builder = initClientBuilder();
 		context = HttpClientContext.create();
 		
 		
@@ -88,15 +100,9 @@ public abstract class AbstractHttpClient {
 		*/
 	}
 
-	private HttpClientBuilder initClientBuilder(boolean doPooling) {
+	private HttpClientBuilder initClientBuilder() {
 		HttpClientBuilder builder = HttpClients.custom().useSystemProperties();
-		builder.setUserAgent(userAgent);
-		
-		if(doPooling) {
-			HttpClientConnectionManager connMgr = buildDefaultPooledConnectionManager();
-			this.builder.setConnectionManager(connMgr);
-		}
-		
+		builder.setUserAgent(userAgent);	
 		return builder;
 	}
 
@@ -110,7 +116,7 @@ public abstract class AbstractHttpClient {
 	 */
 	protected CloseableHttpResponse get(URI uri) throws IOException {
 		HttpGet httpget = new HttpGet(uri);
-		CloseableHttpClient httpClient = builder.build();
+		CloseableHttpClient httpClient = getHttpClient();
 		CloseableHttpResponse response = httpClient.execute(httpget, context);
 		//DO NOT CLOSE or connection pool will shut down (httpClient 4.4)
 //		httpClient.close();
@@ -132,7 +138,7 @@ public abstract class AbstractHttpClient {
 	 */
 	protected CloseableHttpResponse delete(URI uri) throws IOException {
 		HttpDelete httpDel = new HttpDelete(uri);
-		CloseableHttpClient httpClient = builder.build();
+		CloseableHttpClient httpClient = getHttpClient();
 		CloseableHttpResponse response = httpClient.execute(httpDel, context);
 		//DO NOT CLOSE or connection pool will shut down (httpClient 4.4)
 //		httpClient.close();
@@ -164,7 +170,7 @@ public abstract class AbstractHttpClient {
 		// send and get response:
 		httpPost.setEntity(entity);
 		
-		CloseableHttpClient httpClient = builder.build();
+		CloseableHttpClient httpClient = getHttpClient();
 		final String result = httpClient.execute(httpPost, responseHandler, context);
 		logger.debug("Upload done: " + result);
 		//DO NOT CLOSE or connection pool will shut down (httpClient 4.4)
@@ -190,7 +196,7 @@ public abstract class AbstractHttpClient {
 		return host;
 	}
 
-	public Integer getPort() {
+	public int getPort() {
 		return port;
 	}
 	
@@ -221,6 +227,9 @@ public abstract class AbstractHttpClient {
 			builder.setDefaultCredentialsProvider(credsProvider);
 			builder.setProxyAuthenticationStrategy(new ProxyAuthenticationStrategy());
 		}
+		if(httpClient != null) {
+			httpClient = null;
+		}
 	}
 	
 	protected HttpClientConnectionManager buildDefaultPooledConnectionManager() {
@@ -235,7 +244,28 @@ public abstract class AbstractHttpClient {
 		return cm;
 	}
 	
-	public void enablePooling(boolean enabled) {
-		this.builder = initClientBuilder(enabled);
+	public void enablePooling() {
+		HttpClientConnectionManager connMgr = buildDefaultPooledConnectionManager();
+		this.builder.setConnectionManager(connMgr);
+		if(httpClient != null) {
+			httpClient = null;
+		}
+	}
+
+	protected CloseableHttpClient getHttpClient() {
+		if(!REUSE_HTTP_CLIENT_INSTANCE) {
+			return builder.build();
+		}
+		if(httpClient == null) {
+			httpClient = builder.build();
+		}
+		return httpClient;
+	}
+	
+	@Override
+	public void close() throws IOException {
+		if(httpClient != null) {
+			httpClient.close();
+		}
 	}
 }

@@ -25,9 +25,8 @@ public abstract class AbstractBasicAuthHttpClient extends AbstractHttpClient {
 		if(username == null || password == null) throw new IllegalArgumentException("Credentials may not be null!");
 		Credentials creds = new UsernamePasswordCredentials(username, password);
 		
-		int authPort = (port == null ? 443 : port);
-		HttpHost targetHost = new HttpHost(host, authPort, scheme == null ? null : scheme.toString());
-		AuthScope scope = new AuthScope(host, authPort);
+		HttpHost targetHost = new HttpHost(host, super.port, scheme == null ? null : scheme.toString());
+		AuthScope scope = new AuthScope(host, super.port);
 
 		AuthCache authCache = new BasicAuthCache();
 		authCache.put(targetHost, new BasicScheme());
