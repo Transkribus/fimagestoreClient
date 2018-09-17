@@ -2,7 +2,6 @@ package org.dea.fimgstoreclient;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.http.auth.AuthenticationException;
