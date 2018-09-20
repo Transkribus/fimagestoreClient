@@ -16,7 +16,7 @@ public class FimgStoreImg extends FimgStoreObject implements Serializable {
 	
 	protected byte[] data;
 	protected Date dlTime;
-	protected ImgTypeName imgType;
+	protected ImgType imgType;
 	
 	public FimgStoreImg(String key){
 		super(key);
@@ -28,18 +28,18 @@ public class FimgStoreImg extends FimgStoreObject implements Serializable {
 		this.uri = uri;
 	}
 	
-	public FimgStoreImg(String key, String fileName, byte[] data, URI uri, ImgTypeName type) {
+	public FimgStoreImg(String key, String fileName, byte[] data, URI uri, ImgType type) {
 		super(key, fileName);
 		setData(data);
 		this.uri = uri;
 		this.imgType = type;
 	}
 	
-	public ImgTypeName getImgType() {
+	public ImgType getImgType() {
 		return imgType;
 	}
 
-	public void setImgType(ImgTypeName imgType) {
+	public void setImgType(ImgType imgType) {
 		this.imgType = imgType;
 	}
 	

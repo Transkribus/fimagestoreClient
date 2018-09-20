@@ -11,7 +11,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.dea.fimagestore.core.FImagestoreConst;
 import org.dea.fimagestore.core.util.FilekeyUtils;
-import org.dea.fimgstoreclient.beans.ImgTypeName;
+import org.dea.fimgstoreclient.beans.ImgType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +50,11 @@ public class FimgStoreUriBuilder {
 	 * a filenotfoundexception will be returned!
 	 * 
 	 * @param imgKey key of the file
-	 * @param type {@link ImgTypeName}
+	 * @param type {@link ImgType}
 	 * @return URI of the specified file type
 	 * @throws IllegalArgumentException if a parameter is bad
 	 */
-	public URI getImgUri(final String imgKey, final ImgTypeName type)
+	public URI getImgUri(final String imgKey, final ImgType type)
 			throws IllegalArgumentException {
 
 		NameValuePair param = new BasicNameValuePair(FImagestoreConst.FILE_TYPE_PARAM, type.toString());

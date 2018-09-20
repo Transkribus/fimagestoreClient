@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.dea.fimgstoreclient.beans.FimgStoreImg;
-import org.dea.fimgstoreclient.beans.ImgTypeName;
+import org.dea.fimgstoreclient.beans.ImgType;
 import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class FimgStoreGetClientTest {
 			URI uri = uriBuilder.getFileUri(testImgKey);
 			System.out.println("UriBuilder test: " + uri.toString());
 			download = fisc.saveFile(uri, TMP_DIR); //TODO get stream here rather than having client save stuff
-			result = fisc.getImg(testImgKey, ImgTypeName.view);
+			result = fisc.getImg(testImgKey, ImgType.view);
 //		} catch (IllegalArgumentException | IOException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();

@@ -11,6 +11,6 @@ package org.dea.fimgstoreclient.beans;
  * @author philip
  *
  */
-public enum ImgTypeName {
+public enum ImgType {
 	orig, browser, view, thumb, scale50, scale25, bin;
 }

@@ -24,7 +24,7 @@ import org.dea.fimgstoreclient.beans.FimgStoreFileMd;
 import org.dea.fimgstoreclient.beans.FimgStoreImg;
 import org.dea.fimgstoreclient.beans.FimgStoreTxt;
 import org.dea.fimgstoreclient.beans.FimgStoreXml;
-import org.dea.fimgstoreclient.beans.ImgTypeName;
+import org.dea.fimgstoreclient.beans.ImgType;
 import org.dea.fimgstoreclient.utils.FimgStoreMdParser;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -152,7 +152,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 	 * @param imgKey
 	 *            the key to the image to be retrieved
 	 * @param type
-	 *            {@link org.dea.ImgTypeName.beans.ImgType} enum
+	 *            {@link org.dea.fimgstoreclient.beans.ImgType} enum
 	 * @return a {@link org.dea.fimgstoreclient.beans.FimgStoreImg} object
 	 *         containing all data from the response
 	 * @throws IOException
@@ -160,7 +160,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 	 * @throws IllegalArgumentException
 	 *             if a parameter is bad
 	 */
-	public FimgStoreImg getImg(final String imgKey, final ImgTypeName type) throws IOException {
+	public FimgStoreImg getImg(final String imgKey, final ImgType type) throws IOException {
 
 		final URI uri = getUriBuilder().getImgUri(imgKey, type);
 		FimgStoreImg img = (FimgStoreImg) getImg(imgKey, uri);
@@ -399,7 +399,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 	 * user, last ip, number of retrievals)
 	 */
 
-	public File saveImg(final String key, final ImgTypeName type, final String path) throws IOException {
+	public File saveImg(final String key, final ImgType type, final String path) throws IOException {
 		final URI uri = getUriBuilder().getImgUri(key, type);
 		File imgFile = saveFile(uri, path);
 		return imgFile;
