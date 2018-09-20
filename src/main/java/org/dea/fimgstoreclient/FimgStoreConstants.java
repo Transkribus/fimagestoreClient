@@ -4,29 +4,29 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import org.dea.fimagestore.core.FImagestoreConst;
+
 public class FimgStoreConstants {
-//		private static final Logger LOGGER = LoggerFactory.getLogger(Constants.class);
 		private static final Properties props = loadProps("FimgStoreClient.properties");
 		
-		// TODO put those to property file
-		public static final String FILE_TYPE_PARAM = "fileType";
-		public static final String SCALE_PERC_PARAM = "scalePerc";
-		public static final String SCALE_X_Y_PARAM = "scaleXY";
-		public static final String MULT_LITERAL = "x";
-		public static final String CROP_PARAM = "crop";
-		public static final String CONVERT_OPTS_PARAM = "convertOpts";
-		public static final String CONVERT_EXT_PARAM = "convertExt";
-		public static final String MD_FILETYPE_VALUE = "metadata";
-		public static final String ID_PARAM = "id";
-		public static final String PART_OF_VAR_NAME = FimgStoreConstants.getString("partOfVarName")!=null ? FimgStoreConstants.getString("partOfVarName") : "is_part_of";
-		public static final String FILE_VAR_NAME = FimgStoreConstants.getString("fileVarName")!=null ? FimgStoreConstants.getString("fileVarName") : "file";
-		public static final String REPLACE_ID_VAR_NAME = FimgStoreConstants.getString("replaceIdVarName")!=null ? FimgStoreConstants.getString("replaceIdVarName") : "replaceId";
-		public static final String TIMEOUT_PARAM = FimgStoreConstants.getString("timeoutParam")!=null ? FimgStoreConstants.getString("timeoutParam") : "timeout";		
+		public static final String FILE_TYPE_PARAM =FImagestoreConst.FILE_TYPE_PARAM;
+		public static final String SCALE_PERC_PARAM = FImagestoreConst.SCALE_PERC_PARAM;
+		public static final String SCALE_X_Y_PARAM = FImagestoreConst.SCALE_X_Y_PARAM;
+		public static final String MULT_LITERAL = FImagestoreConst.MULT_LITERAL;
+		public static final String CROP_PARAM = FImagestoreConst.CROP_PARAM;
+		public static final String CONVERT_OPTS_PARAM = FImagestoreConst.CONVERT_OPTS_PARAM;
+		public static final String CONVERT_EXT_PARAM = FImagestoreConst.CONVERT_EXT_PARAM;
+		public static final String MD_FILETYPE_VALUE = FImagestoreConst.FILE_TYPE_METADATA;
+		public static final String ID_PARAM = FImagestoreConst.ID_PARAM;
+		public static final String PART_OF_VAR_NAME = FImagestoreConst.IS_PART_OF_FIELD_NAME;
+		public static final String FILE_VAR_NAME = FImagestoreConst.FILE_FIELD_NAME;
+		public static final String REPLACE_ID_VAR_NAME = FImagestoreConst.REPLACE_ID_FIELD_NAME;
+		public static final String TIMEOUT_PARAM = FImagestoreConst.TIMEOUT_FIELD_NAME;		
 
-		public static final String GET_ACTION_PATH = getString("getActionPath");
-		public static final String PUT_ACTION_PATH = getString("putActionPath");
-		public static final String DEL_ACTION_PATH = getString("delActionPath");
-		public static final String CREATE_ACTION_PATH = getString("createActionPath");
+		public static final String GET_ACTION_PATH =  FImagestoreConst.GET_FILE_SERVLET_URL;
+		public static final String PUT_ACTION_PATH = FImagestoreConst.UPLOAD_FILE_SERVLET_URL;
+		public static final String DEL_ACTION_PATH = FImagestoreConst.DELETE_FILE_SERVLET_URL;
+		public static final String CREATE_ACTION_PATH = FImagestoreConst.CREATE_FILE_SERVLET_URL;
 		
 		public static final String DUMMY_IMAGE_KEY = getString("dummyImageKey");
 		
