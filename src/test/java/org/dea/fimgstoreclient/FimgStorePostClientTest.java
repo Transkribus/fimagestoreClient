@@ -4,15 +4,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.http.auth.AuthenticationException;
 import org.dea.fimagestore.core.util.SebisStopWatch.SSW;
 import org.dea.fimgstoreclient.AbstractHttpClient.Scheme;
+import org.dea.fimgstoreclient.beans.FimgStoreImg;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FimgStorePostClientTest {
-	Logger logger = LoggerFactory.getLogger(FimgStorePostClientTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(FimgStorePostClientTest.class);
 	//Trp Test Doc
 	static String collName = "TrpTestDoc";
 	static String basePath = "/mnt/dea_scratch/TRP/TrpTestDoc/";
@@ -21,6 +23,7 @@ public class FimgStorePostClientTest {
 	
 	static FimgStorePostClient fiscPo;
 	static FimgStoreDelClient fiscDel;
+	static FimgStoreGetClient getter;
 	
 	public static void testPostWithTimeout() throws Exception {
 		String file = basePath + fileNames[0] + fileTypes[0];
@@ -99,13 +102,36 @@ public class FimgStorePostClientTest {
 			}
 		}
 	}
+	
+	private static void testUploadEncoding() throws AuthenticationException, IOException {		
+		File testFile = new File("/mnt/dea_scratch/TRP/TrpTestDoc/StAZ-Sign.2-1_001.jpg");
+		
+		final String filename = "messedUpÄÄÄÜÜÜÜ.jpg";
+		
+		File toUpload = new File("/tmp/" + filename);
+		FileUtils.copyFile(testFile, toUpload);
+		toUpload.deleteOnExit();
+
+		String key = fiscPo.postFile(toUpload, "test", 2);
+		
+
+		FimgStoreImg img = getter.getImg(key);
+		
+		logger.info("stored: " + img.getFileName() + " <-> sent: " + filename);
+		
+		logger.info("From md: " + getter.getFileMd(key).getFileName());
+		
+		fiscDel.deleteFile(key, 0);
+	}
 
 	public static void main(String[] args) throws Exception {
 		fiscPo = new FimgStorePostClient(Scheme.https, "dbis-thure.uibk.ac.at", "fimagestoreTrp", args[0], args[1]);
 		fiscDel = new FimgStoreDelClient(Scheme.https, "dbis-thure.uibk.ac.at", "fimagestoreTrp", args[0], args[1]);
+		getter = new FimgStoreGetClient(Scheme.https, "dbis-thure.uibk.ac.at", 443, "fimagestoreTrp");
 		
 		testPostWithTimeout();
 //		testOther();
+		testUploadEncoding(); //fimagestore issue #3
 	}
 
 }
