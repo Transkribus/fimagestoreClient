@@ -67,7 +67,8 @@ public abstract class AbstractHttpClient implements AutoCloseable {
 			throw new ProtocolException("Constructor not applicable for protocol: " + scheme);
 		}
 		this.scheme = Scheme.https; //FIXME http not supported in this constructor!
-		this.host = url.getHost();			
+		this.host = url.getHost();
+		this.port = url.getPort();
 		final String path = url.getPath();
 		this.serverContext = path.substring(0, path.lastIndexOf('/'));	
 		enablePooling();
