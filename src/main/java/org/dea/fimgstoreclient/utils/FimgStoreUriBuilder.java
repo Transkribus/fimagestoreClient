@@ -5,7 +5,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
@@ -16,28 +18,53 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FimgStoreUriBuilder {
-	private String getActionPath;
-	private String putActionPath;
-	private String delActionPath;
-	private String createActionPath;
-	
-	private String serverContext;
-	private URIBuilder uriBuilder;
-	
 	private final static Logger logger = LoggerFactory.getLogger(FimgStoreUriBuilder.class);
+	public final static String PATH_SEP = "/";
+	private final String getActionPath;
+	private final String putActionPath;
+	private final String delActionPath;
+	private final String createActionPath;
+	
+	private final String serverContext;
+	private final URIBuilder uriBuilder;
 	
 	public FimgStoreUriBuilder(final String scheme, final String host, final Integer port, final String context){
-		this.serverContext = (context.startsWith("/")) ? context : "/" + context;
-		getActionPath = this.serverContext + "/" + FImagestoreConst.GET_FILE_SERVLET_URL;
-		putActionPath = this.serverContext + "/" + FImagestoreConst.UPLOAD_FILE_SERVLET_URL;
-		delActionPath = this.serverContext + "/" + FImagestoreConst.DELETE_FILE_SERVLET_URL;
-		createActionPath = this.serverContext + "/" + FImagestoreConst.CREATE_FILE_SERVLET_URL;
+		this.serverContext = FimgStoreUriBuilder.normalizeContextPath(context);
+		this.getActionPath = this.serverContext + FImagestoreConst.GET_FILE_SERVLET_URL;
+		this.putActionPath = this.serverContext + FImagestoreConst.UPLOAD_FILE_SERVLET_URL;
+		this.delActionPath = this.serverContext + FImagestoreConst.DELETE_FILE_SERVLET_URL;
+		this.createActionPath = this.serverContext + FImagestoreConst.CREATE_FILE_SERVLET_URL;
 		this.uriBuilder = new URIBuilder().setScheme(scheme).setHost(host);
 		if(port != null && port != 80 && port != 443){
 			this.uriBuilder.setPort(port);
 		}
 	}
 	
+
+	/**
+	 * Normalizes the given context path to start and end with {@link #PATH_SEP}. If null is passed, then {@link #PATH_SEP} is returned.
+	 * 
+	 * @param context
+	 * @return
+	 */
+	public static String normalizeContextPath(String context) {
+		if(context == null) {
+			return PATH_SEP;
+		}
+		if(PATH_SEP.equals(context)) {
+			return context;
+		}
+		if(!context.startsWith(PATH_SEP)) {
+			context = PATH_SEP + context;
+		}
+		if(!context.endsWith(PATH_SEP)) {
+			context = context + PATH_SEP;
+		}
+		//replace subsequent slashes if any
+		context = context.replaceAll(PATH_SEP + "+", PATH_SEP);
+		return context;
+	}
+
 
 	public URI getFileUri(final String fileKey) throws IllegalArgumentException {
 		return buildURI(fileKey, (NameValuePair[]) null);
@@ -250,9 +277,8 @@ public class FimgStoreUriBuilder {
 		paramsList.add(new BasicNameValuePair(FImagestoreConst.ID_PARAM, fileKey));
 
 		// reset parameters on UriBuilder Object
-		uriBuilder.clearParameters();
-		// and set the new ones
-		uriBuilder.setPath(getActionPath).addParameters(paramsList);
+		URIBuilder uriBuilder = getUriBuilder(getActionPath);
+		uriBuilder.addParameters(paramsList);
 
 		// build the URI
 		try {
@@ -268,13 +294,12 @@ public class FimgStoreUriBuilder {
 
 	public URI getPostUri(){
 		URI uri = null; 
-		uriBuilder.clearParameters();
-		uriBuilder.setPath(putActionPath);
+		URIBuilder uriBuilder = getUriBuilder(putActionPath);
 		try{
 			uri = uriBuilder.build();
 		} catch(URISyntaxException e){
 			//getCoffee()
-			e.printStackTrace();
+			logger.error("Bad Fimagestore configuration! Could not build a URI.", e);
 		}
 		
 		return uri;
@@ -290,8 +315,8 @@ public class FimgStoreUriBuilder {
 			throw new IllegalArgumentException("The fileKey's format is currupt: " + fileKey);
 		}
 		
-		uriBuilder.clearParameters();
-		uriBuilder.setPath(delActionPath).addParameter(FImagestoreConst.ID_PARAM, fileKey);
+		URIBuilder uriBuilder = getUriBuilder(delActionPath);
+		uriBuilder.addParameter(FImagestoreConst.ID_PARAM, fileKey);
 		try{
 			uri = uriBuilder.build();
 		} catch(URISyntaxException e){
@@ -303,8 +328,24 @@ public class FimgStoreUriBuilder {
 	}
 
 	public URI getBaseUri() throws URISyntaxException {
+		return getUriBuilder(serverContext).build();
+	}
+	
+	public URI getBaseGetUri() throws URISyntaxException {
+		return getUriBuilder(getActionPath).build();
+	}
+	
+	public URI getBasePutUri()  throws URISyntaxException {
+		return getUriBuilder(putActionPath).build();
+	}
+	
+	public URI getBaseDelUri()  throws URISyntaxException {
+		return getUriBuilder(delActionPath).build();
+	}
+	
+	private URIBuilder getUriBuilder(String path) {
 		uriBuilder.clearParameters();
-		uriBuilder.setPath(serverContext);
-		return uriBuilder.build();
+		uriBuilder.setPath(path);
+		return uriBuilder;
 	}
 }

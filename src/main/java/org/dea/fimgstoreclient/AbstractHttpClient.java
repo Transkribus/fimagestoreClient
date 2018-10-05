@@ -1,5 +1,6 @@
 package org.dea.fimgstoreclient;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ProtocolException;
 import java.net.URI;
@@ -125,7 +126,11 @@ public abstract class AbstractHttpClient implements AutoCloseable {
 		CloseableHttpResponse response = httpClient.execute(httpget, context);
 		//DO NOT CLOSE or connection pool will shut down (httpClient 4.4)
 //		httpClient.close();
-		if (response.getStatusLine().getStatusCode() >= 300) {
+		final int statusCode = response.getStatusLine().getStatusCode();
+		if (statusCode == 404) {
+			throw new FileNotFoundException("No resource found with URI: " + uri.toString());
+		} 
+		if (statusCode >= 300) {
 			throw new IOException("Error while getting " + uri.toString() + ": " 
 					+ response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
 		}
