@@ -13,8 +13,8 @@ import javax.swing.JPanel;
  * a simple image display panel
  */
 public class ImagePanel extends JPanel{
-
-    private BufferedImage image;
+	private static final long serialVersionUID = -5582787151369689975L;
+	private BufferedImage image;
 
     public ImagePanel(String imgPath) {
        try {                

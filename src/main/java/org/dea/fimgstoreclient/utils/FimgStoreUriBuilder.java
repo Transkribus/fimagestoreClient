@@ -5,9 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
@@ -121,7 +119,7 @@ public class FimgStoreUriBuilder {
 	 * @throws IllegalArgumentException if a parameter is bad
 	 */
 	@SafeVarargs
-	public final URI getImgBlackenedUri(final String imgKey, List<Point> ...polygonPtsList)
+	public final URI getImgBlackenedUri(final String imgKey, List<Point>... polygonPtsList)
 			throws IllegalArgumentException {
 		
 		String convertOpts =  "-fill black";

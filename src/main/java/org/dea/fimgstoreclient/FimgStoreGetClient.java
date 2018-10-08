@@ -26,7 +26,6 @@ import org.dea.fimgstoreclient.beans.FimgStoreTxt;
 import org.dea.fimgstoreclient.beans.FimgStoreXml;
 import org.dea.fimgstoreclient.beans.ImgType;
 import org.dea.fimgstoreclient.utils.FimgStoreMdParser;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
@@ -330,7 +329,6 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 	 */
 	public FimgStoreXml getXml(final String fileKey) throws IOException {
 		CloseableHttpResponse response = null;
-		Document doc = null;
 
 		// validate params and build Uri
 		final URI uri = getUriBuilder().getFileUri(fileKey);
