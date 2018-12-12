@@ -119,7 +119,7 @@ public class FimgStorePostClientTest {
 		
 		logger.info("stored: " + img.getFileName() + " <-> sent: " + filename);
 		
-		logger.info("From md: " + getter.getFileMd(key).getFileName());
+		logger.info("From md: " + getter.getFileMd(key).getOrigFilename());
 		
 		fiscDel.deleteFile(key, 0);
 	}

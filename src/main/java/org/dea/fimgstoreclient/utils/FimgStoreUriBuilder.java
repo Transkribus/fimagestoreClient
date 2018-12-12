@@ -288,22 +288,8 @@ public class FimgStoreUriBuilder {
 
 		return uri;
 	}
-
-
-	public URI getPostUri(){
-		URI uri = null; 
-		URIBuilder uriBuilder = getUriBuilder(putActionPath);
-		try{
-			uri = uriBuilder.build();
-		} catch(URISyntaxException e){
-			//getCoffee()
-			logger.error("Bad Fimagestore configuration! Could not build a URI.", e);
-		}
 		
-		return uri;
-	}
-		
-	public URI getDeleteUri(String fileKey){
+	public URI getDeleteUri(String fileKey) {
 		URI uri = null;
 
 		// validate parameters
@@ -318,27 +304,33 @@ public class FimgStoreUriBuilder {
 		try{
 			uri = uriBuilder.build();
 		} catch(URISyntaxException e){
-			//der Kaffee schmeckt heut irgendwie scheiße
-			e.printStackTrace();
+			throw new IllegalStateException("Could not build URI due to configuration issues.", e);
 		}
-		
 		return uri;
 	}
 
-	public URI getBaseUri() throws URISyntaxException {
-		return getUriBuilder(serverContext).build();
+	public URI getBaseUri() {
+		return buildUri(getUriBuilder(serverContext));
 	}
 	
-	public URI getBaseGetUri() throws URISyntaxException {
-		return getUriBuilder(getActionPath).build();
+	public URI getBaseGetUri() {
+		return buildUri(getUriBuilder(getActionPath));
 	}
 	
-	public URI getBasePutUri()  throws URISyntaxException {
-		return getUriBuilder(putActionPath).build();
+	public URI getBasePutUri() {
+		return buildUri(getUriBuilder(putActionPath));
 	}
 	
-	public URI getBaseDelUri()  throws URISyntaxException {
-		return getUriBuilder(delActionPath).build();
+	public URI getBaseDelUri() {
+		return buildUri(getUriBuilder(delActionPath));
+	}
+	
+	private URI buildUri(URIBuilder builder) {
+		try{
+			return builder.build();
+		} catch(URISyntaxException e){
+			throw new IllegalStateException("Could not build URI due to configuration issues.", e);
+		}
 	}
 	
 	private URIBuilder getUriBuilder(String path) {

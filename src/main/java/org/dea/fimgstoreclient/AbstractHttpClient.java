@@ -171,7 +171,7 @@ public abstract class AbstractHttpClient implements AutoCloseable {
 	 * @throws AuthenticationException if authentication fails
 	 */
 	protected String post(HttpEntity entity, ResponseHandler<String> responseHandler) throws IOException, AuthenticationException {
-		URI uri = getUriBuilder().getPostUri();
+		URI uri = getUriBuilder().getBasePutUri();
 
 		HttpPost httpPost = new HttpPost(uri);
 		

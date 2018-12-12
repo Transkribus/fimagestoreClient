@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ProtocolException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
@@ -19,13 +20,16 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.dea.fimagestore.core.MetadataReader;
+import org.dea.fimagestore.core.beans.FileMetadata;
+import org.dea.fimagestore.core.beans.ImageMetadata;
+import org.dea.fimagestore.core.client.IFImagestoreConfig;
+import org.dea.fimagestore.core.util.FilekeyUtils;
 import org.dea.fimagestore.core.util.StreamUtils;
-import org.dea.fimgstoreclient.beans.FimgStoreFileMd;
 import org.dea.fimgstoreclient.beans.FimgStoreImg;
 import org.dea.fimgstoreclient.beans.FimgStoreTxt;
 import org.dea.fimgstoreclient.beans.FimgStoreXml;
 import org.dea.fimgstoreclient.beans.ImgType;
-import org.dea.fimgstoreclient.utils.FimgStoreMdParser;
 import org.xml.sax.SAXException;
 
 /**
@@ -36,6 +40,10 @@ import org.xml.sax.SAXException;
  */
 public class FimgStoreGetClient extends AbstractHttpClient {
 
+	public FimgStoreGetClient(IFImagestoreConfig config) {
+		super(config.getHostName(), config.getPort(), config.getContext());
+	}
+	
 	public FimgStoreGetClient(String host, String serverContext) {
 		super(host, serverContext);
 	}
@@ -292,7 +300,7 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 	 * @throws IllegalArgumentException
 	 *             if any param is in a bad format
 	 */
-	public FimgStoreFileMd getFileMd(final String key) throws IOException {
+	public FileMetadata getFileMd(final String key) throws IOException {
 		CloseableHttpResponse response = null;
 		InputStream is = null;
 
@@ -308,11 +316,37 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 			is = entity.getContent();
 		}
 
-		FimgStoreFileMd md = FimgStoreMdParser.parse(is, DEFAULT_CHARSET);
+		FileMetadata md = MetadataReader.readFileMetadata(is, DEFAULT_CHARSET);
 		md.setUri(uri);
 		EntityUtils.consume(entity);
 		response.close();
 		return md;
+	}
+	
+	public FileMetadata getFileMd(URL url) throws IOException {
+		if(url == null) {
+			throw new IllegalArgumentException("URL is null.");
+		}
+		if(!this.getHost().equals(url.getHost())) {
+			throw new IllegalArgumentException("Hostname in URL does not match the configuration of this client.");
+		}
+		final String key;
+		try {
+			key = FilekeyUtils.extractKey(url);
+		} catch (URISyntaxException e) {
+			throw new IOException("Could not extract key from url: " + url.toString(), e);
+		}
+
+		return getFileMd(key);
+	}
+	
+	public ImageMetadata getImgMd(URL url) throws IOException {
+		FileMetadata md = getFileMd(url);
+
+		if (!(md instanceof ImageMetadata)) {
+			throw new IOException("File with key " + md.getKey() + " is not an image!");
+		}
+		return (ImageMetadata) md;
 	}
 
 	/**
