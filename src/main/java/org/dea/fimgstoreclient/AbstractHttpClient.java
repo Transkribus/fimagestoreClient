@@ -32,7 +32,7 @@ import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractHttpClient implements AutoCloseable {
+public abstract class AbstractHttpClient implements IFimgStoreClientBase, AutoCloseable {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractHttpClient.class);
 	protected final static String userAgent = "DEA Fimagestore Client 0.3";
 
@@ -214,7 +214,7 @@ public abstract class AbstractHttpClient implements AutoCloseable {
 		http, https;
 	}
 	
-	public FimgStoreUriBuilder getUriBuilder(){
+	public FimgStoreUriBuilder getUriBuilder() {
 		return new FimgStoreUriBuilder(scheme.toString(), host, port, serverContext);
 	}
 

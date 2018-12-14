@@ -14,6 +14,7 @@ import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.dea.fimagestore.core.FImagestoreConst;
+import org.dea.fimagestore.core.client.IFImagestoreConfig;
 import org.dea.fimagestore.core.util.MimeTypes;
 import org.dea.fimgstoreclient.responsehandler.FimgStoreUploadResponseHandler;
 import org.slf4j.Logger;
@@ -25,9 +26,13 @@ import org.slf4j.LoggerFactory;
  * @author philip
  *
  */
-public class FimgStorePostClient extends AbstractBasicAuthHttpClient {
+public class FimgStorePostClient extends AbstractBasicAuthHttpClient implements IFimgStorePostClient {
 	private static final Logger logger = LoggerFactory.getLogger(FimgStorePostClient.class);
 
+	public FimgStorePostClient(IFImagestoreConfig config) {
+		this(Scheme.https, config.getHostName(), config.getPort(), config.getContext(), config.getUsername(), config.getPassword());
+	}
+	
 	public FimgStorePostClient(Scheme scheme, String host, String serverContext,
 			String username, String password) {
 		super(scheme, host, null, serverContext, username, password);
@@ -70,7 +75,7 @@ public class FimgStorePostClient extends AbstractBasicAuthHttpClient {
 //		return postFile(ulFile, isPartOf, 0);
 //	}
 	
-	public String postFile(byte[] data, final String fileName, final String isPartOf, final int nrOfRetries) throws IOException, AuthenticationException {
+	public String postFile(byte[] data, final String fileName, final String isPartOf, final int nrOfRetries) throws IOException {
 		return postFile(data, fileName, isPartOf, nrOfRetries, null);
 	}
 	
@@ -84,7 +89,7 @@ public class FimgStorePostClient extends AbstractBasicAuthHttpClient {
 	 * @throws IOException if network error occurs
 	 * @throws AuthenticationException if authentication fails
 	 */
-	public String postFile(byte[] data, final String fileName, final String isPartOf, final int nrOfRetries, Integer timeoutMinutes) throws IOException, AuthenticationException {
+	public String postFile(byte[] data, final String fileName, final String isPartOf, final int nrOfRetries, Integer timeoutMinutes) throws IOException {
 
 		if (data == null) {
 			throw new IOException("Data is NULL.");
@@ -126,7 +131,7 @@ public class FimgStorePostClient extends AbstractBasicAuthHttpClient {
 	 * @throws IOException if network error occurs
 	 * @throws AuthenticationException if authentication fails
 	 */
-	public String replaceFile(final String key, byte[] data, final String fileName, final String isPartOf, final int nrOfRetries) throws IOException, AuthenticationException {
+	public String replaceFile(final String key, byte[] data, final String fileName, final String isPartOf, final int nrOfRetries) throws IOException {
 
 		if (data == null) {
 			throw new IOException("Data is NULL.");
@@ -141,7 +146,7 @@ public class FimgStorePostClient extends AbstractBasicAuthHttpClient {
 		return postContent(fileBody, isPartOf, key, nrOfRetries, null);
 	}
 	
-	private String postContent(ContentBody body, final String isPartOf, final String key, int nrOfRetries, Integer timeoutMinutes) throws IOException, AuthenticationException {
+	private String postContent(ContentBody body, final String isPartOf, final String key, int nrOfRetries, Integer timeoutMinutes) throws IOException {
 
 		if (body == null) {
 			throw new IOException("Data is NULL.");

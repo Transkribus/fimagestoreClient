@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
  * @author philip
  * 
  */
-public class FimgStoreGetClient extends AbstractHttpClient {
+public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStoreGetClient {
 
 	public FimgStoreGetClient(IFImagestoreConfig config) {
 		super(config.getHostName(), config.getPort(), config.getContext());
@@ -430,23 +430,24 @@ public class FimgStoreGetClient extends AbstractHttpClient {
 	 * retrieval statistics for the file with the given id (last access date, last
 	 * user, last ip, number of retrievals)
 	 */
-
+	
 	public File saveImg(final String key, final ImgType type, final String path) throws IOException {
+		return saveImg(key, type, path, null);
+	}
+	
+	public File saveImg(final String key, final ImgType type, final String path, final String filename) throws IOException {
 		final URI uri = getUriBuilder().getImgUri(key, type);
-		File imgFile = saveFile(uri, path);
-		return imgFile;
+		return saveFile(uri, path, filename);
 	}
 
 	public File saveFile(final String key, final String path) throws IOException {
 		final URI uri = getUriBuilder().getFileUri(key);
-		File file = saveFile(uri, path);
-		return file;
+		return saveFile(uri, path);
 	}
 
 	public File saveFile(final String key, final String path, final String filename) throws IOException {
 		final URI uri = getUriBuilder().getFileUri(key);
-		File file = saveFile(uri, path, filename);
-		return file;
+		return saveFile(uri, path, filename);
 	}
 
 	public File saveFile(final URI uri, String path) throws IllegalArgumentException, IOException {
