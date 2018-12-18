@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.dea.fimagestore.core.client.IFImagestoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +16,13 @@ import org.slf4j.LoggerFactory;
  * @author philip
  * 
  */
-public class FimgStoreDelClient extends AbstractBasicAuthHttpClient {
+public class FimgStoreDelClient extends AbstractBasicAuthHttpClient implements IFimgStoreDelClient {
 	
 	private static final Logger logger = LoggerFactory.getLogger(FimgStoreDelClient.class);
+	
+	public FimgStoreDelClient(final IFImagestoreConfig config) {
+		super(config);
+	}
 	
 	public FimgStoreDelClient(Scheme scheme, String host, String serverContext, String username,
 			String password) {
@@ -37,7 +42,7 @@ public class FimgStoreDelClient extends AbstractBasicAuthHttpClient {
 	 * @throws IOException of network error occurs
 	 * @throws AuthenticationException if authentication fails
 	 */
-	public boolean deleteFile(final String fileKey, int nrOfRetries) throws IOException, AuthenticationException {
+	public boolean deleteFile(final String fileKey, int nrOfRetries) throws IOException {
 		logger.debug("deleteFile()");
 		if(FImagestoreClientConfig.DUMMY_IMAGE_KEY.equals(fileKey)) {
 			//the dummy image will not be deleted. Just pretend it was successful
@@ -99,7 +104,7 @@ public class FimgStoreDelClient extends AbstractBasicAuthHttpClient {
 					else logger.error("File " + key + " could not be deleted!");
 					// Do not flood the fimagestore.
 					Thread.sleep(500);
-				} catch(AuthenticationException | IOException e){
+				} catch(IOException e){
 					logger.error("Failed to remove image with key: " + key);
 					logger.error(e.getMessage());
 					e.printStackTrace();

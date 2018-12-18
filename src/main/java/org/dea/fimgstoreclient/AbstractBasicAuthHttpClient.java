@@ -14,11 +14,16 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.dea.fimagestore.core.client.IFImagestoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractBasicAuthHttpClient extends AbstractHttpClient {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractBasicAuthHttpClient.class);
+	
+	protected AbstractBasicAuthHttpClient(final IFImagestoreConfig config) {
+		this(Scheme.https, config.getHostName(), config.getPort(), config.getContext(), config.getUsername(), config.getPassword());
+	}
 	
 	protected AbstractBasicAuthHttpClient(final Scheme scheme, final String host, final Integer port, final String serverContext, String username, String password) {
 		super(scheme, host, port, serverContext);
