@@ -9,7 +9,6 @@ import org.apache.http.auth.AuthenticationException;
 import org.dea.fimagestore.core.util.SebisStopWatch.SSW;
 import org.dea.fimgstoreclient.AbstractHttpClient.Scheme;
 import org.dea.fimgstoreclient.beans.FimgStoreImg;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +83,7 @@ public class FimgStorePostClientTest {
 		if(key != null) {
 			try {
 				fiscDel.deleteFile(key, 2);
-			} catch (AuthenticationException | IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}

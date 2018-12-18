@@ -30,7 +30,7 @@ public class FimgStorePostClient extends AbstractBasicAuthHttpClient implements 
 	private static final Logger logger = LoggerFactory.getLogger(FimgStorePostClient.class);
 
 	public FimgStorePostClient(IFImagestoreConfig config) {
-		this(Scheme.https, config.getHostName(), config.getPort(), config.getContext(), config.getUsername(), config.getPassword());
+		super(config);
 	}
 	
 	public FimgStorePostClient(Scheme scheme, String host, String serverContext,
