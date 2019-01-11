@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-import org.dea.fimagestore.core.FImagestoreConfig;
+import org.dea.fimagestore.core.FImagestoreProperties;
 import org.dea.fimagestore.core.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 public class FImagestoreClientConfig {
 		private static final Logger logger = LoggerFactory.getLogger(FImagestoreClientConfig.class);
 		/**
-		 * Default config file "{@value FImagestoreConfig#DEFAULT_PROPS_FILE_NAME}" is 
+		 * Default config file "{@value FImagestoreProperties#DEFAULT_PROPS_FILE_NAME}" is 
 		 * loaded from classpath by default mainly to not require explicit loading in unit tests.<br/>
 		 * webapp will load its config specifically during initialization.  
 		 */
