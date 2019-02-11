@@ -75,7 +75,9 @@ public class FimgStoreDelClient extends AbstractBasicAuthHttpClient implements I
 				throwup = e;
 			}
 		} while(throwup != null && retries++ < nrOfRetries);
-		response.close();
+		if(response != null) {
+			response.close();
+		}
 		//check if the last retry did also fail
 		if(throwup != null){
 			logger.error("Error during HTTP GET: All retries failed! " + throwup.getMessage());

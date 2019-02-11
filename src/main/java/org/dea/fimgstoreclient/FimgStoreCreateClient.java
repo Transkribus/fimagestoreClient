@@ -80,7 +80,7 @@ public class FimgStoreCreateClient extends AbstractBasicAuthHttpClient {
 		//log username
 		hasCreds(host, port);	
 		
-		CloseableHttpClient httpClient = builder.build();
+		CloseableHttpClient httpClient = super.getHttpClient();
 		final String result = httpClient.execute(httpPut, responseHandler, context);
 		logger.debug("create done: " + result);
 		//DO NOT CLOSE or connection pool will shut down (httpClient 4.4)

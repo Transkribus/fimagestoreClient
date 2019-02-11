@@ -213,7 +213,7 @@ public class FimgStorePostClient extends AbstractBasicAuthHttpClient implements 
 		// content charset
 		logger.debug("Setting MultiPartMode: " + HttpMultipartMode.BROWSER_COMPATIBLE);
 		entBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-		entBuilder.setCharset(DEFAULT_CHARSET);
+		entBuilder.setCharset(FimgStoreConstants.DEFAULT_CHARSET);
 		return entBuilder;
 	}
 
@@ -224,6 +224,6 @@ public class FimgStorePostClient extends AbstractBasicAuthHttpClient implements 
 			throw new IOException("Unknown extension: " + fileName);
 		}
 		//attach charset which is UTF-8 for all Transkribus apps
-		return ContentType.create(mimeType, DEFAULT_CHARSET);
+		return ContentType.create(mimeType, FimgStoreConstants.DEFAULT_CHARSET);
 	}
 }

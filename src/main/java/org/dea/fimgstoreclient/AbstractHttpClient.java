@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -28,6 +26,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.dea.fimgstoreclient.responsehandler.AFimgStoreResponseWithAttachmentHandler;
 import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +34,8 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractHttpClient implements IFimgStoreClientBase, AutoCloseable {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractHttpClient.class);
 	protected final static String userAgent = "DEA Fimagestore Client 0.3";
-
-	protected final static Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 	
-	protected final HttpClientBuilder builder;
+	private final HttpClientBuilder builder;
 	protected final HttpClientContext context;
 	private CloseableHttpClient httpClient = null;
 	
@@ -128,14 +125,22 @@ public abstract class AbstractHttpClient implements IFimgStoreClientBase, AutoCl
 //		httpClient.close();
 		final int statusCode = response.getStatusLine().getStatusCode();
 		if (statusCode == 404) {
+			response.close();
 			throw new FileNotFoundException("No resource found with URI: " + uri.toString());
 		} 
 		if (statusCode >= 300) {
+			response.close();
 			throw new IOException("Error while getting " + uri.toString() + ": " 
 					+ response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
 		}
 		
 		return response;
+	}
+	
+	protected <T> T get(URI uri, AFimgStoreResponseWithAttachmentHandler<T> responseHandler) throws IOException {
+		HttpGet httpget = new HttpGet(uri);
+		CloseableHttpClient httpClient = getHttpClient();
+		return httpClient.execute(httpget, responseHandler, context);
 	}
 	
 	/**

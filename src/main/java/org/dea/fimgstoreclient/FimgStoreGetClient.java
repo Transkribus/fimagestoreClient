@@ -30,6 +30,7 @@ import org.dea.fimgstoreclient.beans.FimgStoreImg;
 import org.dea.fimgstoreclient.beans.FimgStoreTxt;
 import org.dea.fimgstoreclient.beans.FimgStoreXml;
 import org.dea.fimgstoreclient.beans.ImgType;
+import org.dea.fimgstoreclient.utils.OtherUtils;
 import org.xml.sax.SAXException;
 
 /**
@@ -61,34 +62,6 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 	}
 
 	/**
-	 * Gets the entity content (attached file) as InputStream
-	 * 
-	 * @param uri
-	 *            the uri of the object to be retrieved
-	 * @return the inputstream of the file from the response object
-	 * @throws IllegalArgumentException
-	 *             if URI is invalid or null
-	 * @throws IOException
-	 *             if network error occurs
-	 */
-	public InputStream getResourceAsStream(final URI uri) throws IOException {
-		CloseableHttpResponse response = null;
-		InputStream is = null;
-
-		response = get(uri);
-
-		// just call this to validate header
-		getAttachmInfo(response);
-
-		HttpEntity entity = response.getEntity();
-		if (entity != null) {
-			is = entity.getContent();
-		}
-
-		return is;
-	}
-
-	/**
 	 * Gets an Image from Fimagestore and returns a
 	 * {@link org.dea.fimgstoreclient.beans.FimgStoreImg} containing orig. filename,
 	 * the file data as byte[] and the download time
@@ -102,35 +75,42 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 	 *             of network error occurs
 	 */
 	private FimgStoreImg getImg(final String imgKey, final URI uri) throws IOException {
-		CloseableHttpResponse response = null;
+		HttpEntity entity = null;
 		ByteArrayOutputStream data = null;
-		response = get(uri);
-
-		final String fileName = getAttachmInfo(response);
-
-		HttpEntity entity = response.getEntity();
-		if (entity != null) {
+		try (CloseableHttpResponse response = get(uri);) {
+			
+			final String fileName = getAttachmInfo(response);
+	
+			entity = response.getEntity();
+			if (entity == null) {
+				throw new IOException("No data was sent by the server.");
+			}
 			data = StreamUtils.writeStreamToByteArr(entity.getContent());
+			return new FimgStoreImg(imgKey, fileName, data.toByteArray(), uri);
+		} finally {
+			if(data != null) {
+				data.close();
+			}
+			EntityUtils.consume(entity);
 		}
-		EntityUtils.consume(entity);
-		response.close();
-		return new FimgStoreImg(imgKey, fileName, data.toByteArray(), uri);
 	}
 
 	public byte[] getData(final URI uri) throws IOException {
-		CloseableHttpResponse response = null;
+		HttpEntity entity = null;
 		ByteArrayOutputStream data = null;
-		response = get(uri);
-
-		// final String fileName = getAttachmInfo(response);
-
-		HttpEntity entity = response.getEntity();
-		if (entity != null) {
+		try (CloseableHttpResponse response = get(uri);) {
+			entity = response.getEntity();
+			if (entity == null) {
+				throw new IOException("No data was sent by the server.");
+			}
 			data = StreamUtils.writeStreamToByteArr(entity.getContent());
+			return data.toByteArray();
+		} finally {
+			if(data != null) {
+				data.close();
+			}
+			EntityUtils.consume(entity);
 		}
-		EntityUtils.consume(entity);
-		response.close();
-		return data.toByteArray();
 	}
 
 	/**
@@ -170,16 +150,17 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 	public FimgStoreImg getImg(final String imgKey, final ImgType type) throws IOException {
 
 		final URI uri = getUriBuilder().getImgUri(imgKey, type);
-		FimgStoreImg img = (FimgStoreImg) getImg(imgKey, uri);
+		FimgStoreImg img = getImg(imgKey, uri);
 
 		img.setImgType(type);
 
 		return img;
 	}
 
-	public FimgStoreImg getImgBlackened(String imgKey, List<Point>... polygonPtsList) throws IOException {
+	@SafeVarargs
+	public final FimgStoreImg getImgBlackened(String imgKey, List<Point>... polygonPtsList) throws IOException {
 		URI uri = getUriBuilder().getImgBlackenedUri(imgKey, polygonPtsList);
-		return (FimgStoreImg) getImg(imgKey, uri);
+		return getImg(imgKey, uri);
 	}
 
 	/**
@@ -199,7 +180,7 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 
 		final URI uri = getUriBuilder().getImgPercScaledUri(imgKey, scalePerc);
 
-		return (FimgStoreImg) getImg(imgKey, uri);
+		return getImg(imgKey, uri);
 	}
 
 	/**
@@ -224,7 +205,7 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 			boolean preserveAspect) throws IOException {
 
 		final URI uri = getUriBuilder().getImgXyScaledUri(imgKey, xPixels, yPixels, preserveAspect);
-		return (FimgStoreImg) getImg(imgKey, uri);
+		return getImg(imgKey, uri);
 	}
 
 	/**
@@ -252,7 +233,7 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 			final int height) throws IOException {
 
 		final URI uri = getUriBuilder().getImgCroppedUri(imgKey, posX, posY, width, height);
-		return (FimgStoreImg) getImg(imgKey, uri);
+		return getImg(imgKey, uri);
 	}
 
 	/**
@@ -286,7 +267,7 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 
 		final URI uri = getUriBuilder().getImgConvUri(imgKey, convertOps, convertExt);
 
-		return (FimgStoreImg) getImg(imgKey, uri);
+		return getImg(imgKey, uri);
 	}
 
 	/**
@@ -301,26 +282,24 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 	 *             if any param is in a bad format
 	 */
 	public FileMetadata getFileMd(final String key) throws IOException {
-		CloseableHttpResponse response = null;
-		InputStream is = null;
-
 		final URI uri = getUriBuilder().getImgMdUri(key);
-
-		response = get(uri);
-
-		// just call this to validate header
-		getAttachmInfo(response);
-
-		HttpEntity entity = response.getEntity();
-		if (entity != null) {
-			is = entity.getContent();
+		HttpEntity entity = null;
+		try (CloseableHttpResponse response = get(uri);) {
+			// just call this to validate header
+			getAttachmInfo(response);
+	
+			entity = response.getEntity();
+			if (entity == null) {
+				throw new IOException("No data was sent by the server.");
+			}
+			InputStream is = entity.getContent();
+			
+			FileMetadata md = MetadataReader.readFileMetadata(is, FimgStoreConstants.DEFAULT_CHARSET);
+			md.setUri(uri);
+			return md;
+		} finally {
+			EntityUtils.consume(entity);
 		}
-
-		FileMetadata md = MetadataReader.readFileMetadata(is, DEFAULT_CHARSET);
-		md.setUri(uri);
-		EntityUtils.consume(entity);
-		response.close();
-		return md;
 	}
 	
 	public FileMetadata getFileMd(URL url) throws IOException {
@@ -362,31 +341,22 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 	 *             if any param is in a bad format
 	 */
 	public FimgStoreXml getXml(final String fileKey) throws IOException {
-		CloseableHttpResponse response = null;
-
 		// validate params and build Uri
 		final URI uri = getUriBuilder().getFileUri(fileKey);
-
-		// System.out.println(uri);
-
-		response = get(uri);
-
-		final String fileName = getAttachmInfo(response);
-
-		HttpEntity entity = response.getEntity();
-		FimgStoreXml xml = null;
-		if (entity != null) {
-			try {
-				byte[] data = StreamUtils.writeStreamToByteArr(entity.getContent()).toByteArray();
-				xml = new FimgStoreXml(fileKey, fileName, data, uri);
-			} catch (ParserConfigurationException | IllegalStateException | SAXException e) {
-				throw new IOException("Error while loading XML Document " + fileKey + ": " + e.getMessage());
-			} finally {
-				EntityUtils.consume(entity);
-				response.close();
+		HttpEntity entity = null;
+		try (CloseableHttpResponse response = get(uri);) {
+			final String fileName = getAttachmInfo(response);
+			entity = response.getEntity();
+			if (entity == null) {
+				throw new IOException("No data was sent by the server.");
 			}
+			byte[] data = StreamUtils.writeStreamToByteArr(entity.getContent()).toByteArray();
+			return new FimgStoreXml(fileKey, fileName, data, uri);
+		} catch (ParserConfigurationException | IllegalStateException | SAXException e) {
+			throw new IOException("Error while loading XML Document " + fileKey + ": " + e.getMessage());
+		} finally {
+			EntityUtils.consume(entity);
 		}
-		return xml;
 	}
 
 	/**
@@ -399,24 +369,20 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 	 *             if network error occurs
 	 */
 	public FimgStoreTxt getTxt(String fileKey) throws IOException {
-		CloseableHttpResponse response = null;
-		String text = null;
 		// validate params and build Uri
 		final URI uri = getUriBuilder().getFileUri(fileKey);
-
-		response = get(uri);
-
-		final String fileName = getAttachmInfo(response);
-		HttpEntity entity = response.getEntity();
-		if (entity != null) {
-			try {
-				text = StreamUtils.writeStreamToString(entity.getContent(), "UTF-8");
-			} finally {
-				EntityUtils.consume(entity);
-				response.close();
+		HttpEntity entity = null;
+		try (CloseableHttpResponse response = get(uri);) {
+			final String fileName = getAttachmInfo(response);
+			entity = response.getEntity();
+			if (entity == null) {
+				throw new IOException("No data was sent by the server.");
 			}
+			String text = StreamUtils.writeStreamToString(entity.getContent(), "UTF-8");
+			return new FimgStoreTxt(fileKey, fileName, text, uri);
+		} finally {
+			EntityUtils.consume(entity);
 		}
-		return new FimgStoreTxt(fileKey, fileName, text, uri);
 	}
 
 	/*
@@ -455,26 +421,23 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 	}
 
 	public File saveFile(final URI uri, String path, String fileName) throws IllegalArgumentException, IOException {
-		CloseableHttpResponse response = null;
-		File file = null;
-
-		response = get(uri);
-		try {
+		File file;
+		HttpEntity entity = null;
+		try (CloseableHttpResponse response = get(uri);) {
 			String origFileName = getAttachmInfo(response);
-
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-
-				if (!path.endsWith(File.separator)) {
-					path += File.separator;
-				}
-				// build the filePath
-				String filePath = path + (fileName == null || fileName.isEmpty() ? origFileName : fileName);
-				file = StreamUtils.writeStreamToFile(entity.getContent(), filePath);
-				EntityUtils.consume(entity);
+			entity = response.getEntity();
+			if (entity == null) {
+				throw new IOException("No data was sent by the server.");
 			}
+
+			if (!path.endsWith(File.separator)) {
+				path += File.separator;
+			}
+			// build the filePath
+			String filePath = path + (fileName == null || fileName.isEmpty() ? origFileName : fileName);
+			file = StreamUtils.writeStreamToFile(entity.getContent(), filePath);
 		} finally {
-			response.close();
+			EntityUtils.consume(entity);
 		}
 		return file;
 	}
@@ -497,7 +460,8 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 
 	/**
 	 * Extract and validate Content-Disposition header. Rebuild original attachment
-	 * file name.
+	 * file name.<br>
+	 * The caller has to close the Response if an exception is thrown!
 	 * 
 	 * @param response
 	 *            the response to parse
@@ -515,33 +479,7 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 		if (fnindex == -1) {
 			throw new FileNotFoundException("No valid Content-Disposition header found!");
 		}
-		fn = trimQuotes(header.getValue().substring(fnindex + 9));
+		fn = OtherUtils.trimQuotes(header.getValue().substring(fnindex + 9));
 		return fn;
 	}
-
-	private String trimQuotes(String fn) {
-		if (fn == null || fn.isEmpty()) {
-			return fn;
-		}
-		final String QUOTES = "\"";
-		final boolean isFirst = fn.startsWith(QUOTES);
-		final boolean isLast = fn.endsWith(QUOTES);
-		if (isFirst && isLast) {
-			fn = fn.substring(1, fn.length() - 1);
-		} else if (isFirst) {
-			fn = fn.substring(1);
-		} else if (isLast) {
-			fn = fn.substring(0, fn.length() - 1);
-		}
-		// remove quotes in filenames:
-		if (fn.startsWith("\"")) {
-			fn = fn.substring(1);
-		}
-		if (fn.endsWith("\"")) {
-			fn = fn.substring(0, fn.length() - 1);
-		}
-
-		return fn;
-	}
-
 }

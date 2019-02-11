@@ -12,5 +12,29 @@ public class OtherUtils {
 		}
 		return ptsStr.trim();
 	}
+	
+	public static String trimQuotes(String fn) {
+		if (fn == null || fn.isEmpty()) {
+			return fn;
+		}
+		final String QUOTES = "\"";
+		final boolean isFirst = fn.startsWith(QUOTES);
+		final boolean isLast = fn.endsWith(QUOTES);
+		if (isFirst && isLast) {
+			fn = fn.substring(1, fn.length() - 1);
+		} else if (isFirst) {
+			fn = fn.substring(1);
+		} else if (isLast) {
+			fn = fn.substring(0, fn.length() - 1);
+		}
+		// remove quotes in filenames:
+		if (fn.startsWith("\"")) {
+			fn = fn.substring(1);
+		}
+		if (fn.endsWith("\"")) {
+			fn = fn.substring(0, fn.length() - 1);
+		}
 
+		return fn;
+	}
 }

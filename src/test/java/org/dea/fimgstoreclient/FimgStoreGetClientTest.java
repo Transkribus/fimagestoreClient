@@ -20,7 +20,8 @@ public class FimgStoreGetClientTest {
 	
 	final String testImgKey = "WIVJRXZOGQWBYOGAOGRRXKWZ";
 	
-	@Test public void testDownloadAndMetadata() throws IllegalArgumentException, IOException {
+	@Test
+	public void testDownloadAndMetadata() throws IllegalArgumentException, IOException {
 //		final String testImgKey = "WIVJRXZOGQWBYOGAOGRRXKWZ";
 
 		FimgStoreImg result = null;
@@ -51,8 +52,8 @@ public class FimgStoreGetClientTest {
 		System.out.println(download.getAbsolutePath());	
 	}
 	
-	@Test public void testBlackeningImage() throws IllegalArgumentException, IOException {
-		FimgStoreImg result = null;
+	@Test
+	public void testBlackeningImage() throws IllegalArgumentException, IOException {
 		File download = null;
 		List<Point> polygonPts1 = new ArrayList<>();
 		polygonPts1.add(new Point(1908, 189));
@@ -74,7 +75,7 @@ public class FimgStoreGetClientTest {
 			System.out.println("stored blacked image at: "+download.getAbsolutePath());
 			
 //			ImagePanel.showImage(download.getAbsolutePath());
-//			result = fisc.getImg(testImgKey, ImgType.view);
+//			FimgStoreImg result = fisc.getImg(testImgKey, ImgType.view);
 //		} catch (IllegalArgumentException | IOException e) {
 //			e.printStackTrace();
 //		}
