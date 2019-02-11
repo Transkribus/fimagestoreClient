@@ -26,6 +26,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.pool.PoolStats;
 import org.dea.fimgstoreclient.responsehandler.AFimgStoreResponseWithAttachmentHandler;
 import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
 import org.slf4j.Logger;
@@ -43,6 +44,9 @@ public abstract class AbstractHttpClient implements IFimgStoreClientBase, AutoCl
 	protected String host;
 	protected int port;
 	protected Scheme scheme;
+	
+	//reference to connection pool manager (if any) for diagnostic purposes
+	private PoolingHttpClientConnectionManager connectionManager = null;
 	
 	/**
 	 * If set to false, each request will be executed using a new CloseableHttpClient instance as it was since v0.1, if true one instance will be reused.<br> 
@@ -137,6 +141,15 @@ public abstract class AbstractHttpClient implements IFimgStoreClientBase, AutoCl
 		return response;
 	}
 	
+	private void printConnectionPoolInfo() {
+		if(connectionManager == null) {
+			logger.trace("Connection pooling is disabled.");
+			return;
+		}
+		PoolStats stats = connectionManager.getTotalStats();
+		logger.info(this.getClass().getSimpleName() + " connection pool info: " + stats.toString());
+	}
+
 	protected <T> T get(URI uri, AFimgStoreResponseWithAttachmentHandler<T> responseHandler) throws IOException {
 		HttpGet httpget = new HttpGet(uri);
 		CloseableHttpClient httpClient = getHttpClient();
@@ -249,6 +262,7 @@ public abstract class AbstractHttpClient implements IFimgStoreClientBase, AutoCl
 	
 	protected HttpClientConnectionManager buildDefaultPooledConnectionManager() {
 		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+		this.connectionManager = cm;
 		// Increase max total connection to 200
 		cm.setMaxTotal(200);
 		// Increase default max connection per route to 20
@@ -268,6 +282,7 @@ public abstract class AbstractHttpClient implements IFimgStoreClientBase, AutoCl
 	}
 
 	protected CloseableHttpClient getHttpClient() {
+		printConnectionPoolInfo();
 		if(!REUSE_HTTP_CLIENT_INSTANCE) {
 			return builder.build();
 		}
