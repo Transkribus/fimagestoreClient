@@ -13,6 +13,11 @@ public class ConnectionPoolTest {
 	private static final Logger logger = LoggerFactory.getLogger(ConnectionPoolTest.class);
 	
 	/**
+	 * test iterations are 2.5 times the max connection pool size (200 currently)
+	 */
+	final int iterations = 500;
+	
+	/**
 	 * Provoke issue #5
 	 * 
 	 * @throws IOException
@@ -23,7 +28,6 @@ public class ConnectionPoolTest {
 		
 		final String key = "ZOAYSAVROONEAPCFCGVPYSKQ";
 		final String key404 = "UNKRNHSATTZGUUMKZBSBNOUC";
-		final int iterations = 1000;
 		for(int i = 0; i < iterations; i++) {
 			if(i%2 == 0) {
 				logger.debug("i = " + i);
@@ -45,7 +49,6 @@ public class ConnectionPoolTest {
 		FimgStoreGetClient getter = new FimgStoreGetClient(Scheme.https, "files-test.transkribus.eu", null, "/");
 		final String key = "ZOAYSAVROONEAPCFCGVPYSKQ";
 		final String key404 = "UNKRNHSATTZGUUMKZBSBNOUC";
-		final int iterations = 1000;
 		for(int i = 0; i < iterations; i++) {
 			if(i%2 == 0) {
 				logger.debug("i = " + i);
