@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public class LocalhostGetTest {
 	private static final Logger logger = LoggerFactory.getLogger(LocalhostGetTest.class);
 	
-	@Test
+//	@Test
 	public void testGetImg() throws IOException {
 		
 		int iterations = 100;
