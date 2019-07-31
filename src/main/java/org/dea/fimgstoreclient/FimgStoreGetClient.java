@@ -208,27 +208,6 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 		return getImg(imgKey, uri);
 	}
 
-	/**
-	 * Get a cropped version of the image
-	 * 
-	 * crop=posX x posY x width x height
-	 * 
-	 * @param imgKey
-	 *            the key of the file to crop
-	 * @param posX
-	 *            offset left
-	 * @param posY
-	 *            offset top
-	 * @param width
-	 *            width of the snippet
-	 * @param height
-	 *            height of the snippet
-	 * @return {@link org.dea.fimgstoreclient.beans.FimgStoreImg}
-	 * @throws IOException
-	 *             if network error occurs
-	 * @throws IllegalArgumentException
-	 *             if any param is in a bad format
-	 */
 	public FimgStoreImg getImgCropped(final String imgKey, final int posX, final int posY, final int width,
 			final int height) throws IOException {
 

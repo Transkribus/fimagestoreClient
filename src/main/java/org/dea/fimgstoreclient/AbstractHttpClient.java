@@ -147,7 +147,7 @@ public abstract class AbstractHttpClient implements IFimgStoreClientBase, AutoCl
 			return;
 		}
 		PoolStats stats = connectionManager.getTotalStats();
-		logger.debug(this.getClass().getSimpleName() + " connection pool info: " + stats.toString());
+		logger.trace("{} connection pool info: {}", this.getClass().getSimpleName(), stats.toString());
 	}
 
 	protected <T> T get(URI uri, AFimgStoreResponseWithAttachmentHandler<T> responseHandler) throws IOException {
