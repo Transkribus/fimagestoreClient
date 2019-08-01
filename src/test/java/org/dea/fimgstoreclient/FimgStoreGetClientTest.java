@@ -7,11 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.dea.fimgstoreclient.beans.FimgStoreImg;
+import org.dea.fimgstoreclient.beans.FimgStoreXml;
 import org.dea.fimgstoreclient.beans.ImgType;
 import org.dea.fimgstoreclient.utils.FimgStoreUriBuilder;
+import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FimgStoreGetClientTest {
+	private static final Logger logger = LoggerFactory.getLogger(FimgStoreGetClientTest.class);
 	
 	static FimgStoreGetClient fisc = new FimgStoreGetClient("dbis-thure.uibk.ac.at", "fimagestoreTrp");
 	static FimgStoreUriBuilder uriBuilder = fisc.getUriBuilder();
@@ -79,6 +84,25 @@ public class FimgStoreGetClientTest {
 //		} catch (IllegalArgumentException | IOException e) {
 //			e.printStackTrace();
 //		}
+		
+	}
+	
+	/**
+	 * Test to check if the client can decode content correctly.
+	 * It does not yet check if encoding is enabled on the server though!
+	 * By enabling debug logging for org.apache.* the content length of the response is visible for comparison. 
+	 *  
+	 * @throws IOException
+	 */
+	@Test
+	public void getGzippedXmlTest() throws IOException {
+		final String xmlKey = "KEMNGBPFAQPZKPAYZOXAZKDP";
+		try (FimgStoreGetClient getter = new FimgStoreGetClient("files-test.transkribus.eu", "/")) {
+			FimgStoreXml xml = getter.getXml(xmlKey);
+			String content = new String(xml.getData());
+			logger.info("Received content of size {}:\n{}", content.length(), content);
+			Assert.assertTrue(content.startsWith("<?xml"));
+		}
 		
 	}
 
