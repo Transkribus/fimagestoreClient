@@ -94,6 +94,11 @@ public class FimgStoreGetClient extends AbstractHttpClient implements IFimgStore
 			EntityUtils.consume(entity);
 		}
 	}
+	
+	public byte[] getData(final String key) throws IOException {
+		final URI uri = getUriBuilder().getFileUri(key);
+		return getData(uri);
+	}
 
 	public byte[] getData(final URI uri) throws IOException {
 		HttpEntity entity = null;

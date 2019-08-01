@@ -2,7 +2,6 @@ package org.dea.fimgstoreclient;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 
 import org.dea.fimgstoreclient.beans.FimgStoreImg;
 import org.dea.fimgstoreclient.beans.FimgStoreXml;
@@ -12,6 +11,7 @@ public interface IFimgStoreGetClient extends IFimgStoreClientBase {
 
 	public File saveImg(final String fileKey, final ImgType type, final String path, final String filename) throws IOException;
 	public File saveFile(final String fileKey, String path, String fileName) throws IllegalArgumentException, IOException;
+	public byte[] getData(final String fileKey) throws IllegalArgumentException, IOException;
 	public FimgStoreXml getXml(final String fileKey) throws IOException;
 	/**
 	 * Get a cropped version of the image
