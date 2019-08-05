@@ -71,13 +71,13 @@ public class UploadTest {
 		String key = null;
 		Exception ex = null;
 		try {
-			key = poster.postFile(testFile, "http-client test", 2);
+			key = poster.postFile(testFile, "http-client test", 0);
 		} catch (AuthenticationException | IOException e) {
 			ex = e;
 		} finally {
 			if(key != null) {
 				try {
-					deller.deleteFile(key, 2);
+					deller.deleteFile(key, 0);
 				} catch (IOException e) {
 					logger.error("Deletion failed.", e);
 				}
