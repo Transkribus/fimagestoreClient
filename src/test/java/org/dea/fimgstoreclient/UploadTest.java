@@ -15,8 +15,24 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Upload connectivity test to be run on servers (to test network config such as proxy settings etc.)<br><br>
+ * In order to make this run, place a file "fimagestore_creds.properties" with values for "username" and "pw" into the root folder of the FimagestoreClient project.
+ * 
+ * <ul>
+ * <li>The credentials have to be allowed on the target fimagestore for uploading files.</li>
+ * <li>The IP address of the machine this is run on must be included in the write_ip list of the fimagestore too.</li>
+ * <li>FImagestore addresses that will be tested are defined in the {@link #HOSTS} field.</li>
+ * <li>If the properties file is not found the test will be skipped!</li>
+ * </ul>
+ */
 public class UploadTest {
 	private static final Logger logger = LoggerFactory.getLogger(UploadTest.class);
+	
+	private static final String[][] HOSTS = new String[][] {
+		{ "files-test.transkribus.eu", "/" },
+		{ "read04.uibk.ac.at", "/" }
+	};
 	
 	private FimgStorePostClient poster;
 	private FimgStoreDelClient deller;
@@ -43,18 +59,16 @@ public class UploadTest {
 		deller = new FimgStoreDelClient(Scheme.https, hostname, context, username, pw);
 	}
 	
+	/**
+	 * @see javadoc of {@link UploadTest}
+	 */
 	@Test
 	public void testPost() {
 		SSW sw = new SSW();
 			
 		final File f = new File("/mnt/dea_scratch/TRP/Bentham_box_002/002_080_001.jpg");
 		
-		String[][] hosts = new String[][] {
-			{ "files-test.transkribus.eu", "/" },
-			{ "read04.uibk.ac.at", "/" }
-		};
-		
-		for(String[] h : hosts) {
+		for(String[] h : HOSTS) {
 			sw.start();
 			try {
 				postAndDelete(h[0], h[1], f);
