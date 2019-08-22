@@ -1,14 +1,17 @@
 package org.dea.fimgstoreclient;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.auth.AuthenticationException;
+import org.dea.fimagestore.core.beans.FileOperation;
 import org.dea.fimagestore.core.util.SebisStopWatch.SSW;
 import org.dea.fimgstoreclient.AbstractHttpClient.Scheme;
 import org.dea.fimgstoreclient.beans.FimgStoreImg;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +75,59 @@ public class FimgStorePostClientTest {
 		sw.stop("dbis-thure post and delete", logger);		
 	}
 	
+	public static void testPostFileOperationCopy() {
+		SSW sw = new SSW();
+		File f = new File("/mnt/dea_scratch/TRP/Bentham_box_002/002_080_001.jpg");
+		sw.start();
+		String key = null;
+		try {
+			key = fiscPo.storeLocalFileByCopy(f, "http-client test", null);
+		} catch (IOException | AuthenticationException e) {
+			e.printStackTrace();
+		}		
+		
+		if(key != null) {
+			try {
+				fiscDel.deleteFile(key, 2);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		sw.stop("dbis-thure post and delete", logger);		
+	}
+	
+	public static void testPostFileOperationMove() throws IOException {
+		SSW sw = new SSW();
+		File f = new File("/mnt/dea_scratch/TRP/Bentham_box_002/002_080_001.jpg");
+		
+		File fileToMove = new File("/mnt/dea_scratch/tmp_philip/tmp", f.getName());
+		Files.copy(f.toPath(), fileToMove.toPath());
+		
+		Assert.assertTrue(fileToMove.isFile());
+		
+		sw.start();
+		String key = null;
+		try {
+			key = fiscPo.storeLocalFileByMove(fileToMove, "http-client test", null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (AuthenticationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Assert.assertFalse(fileToMove.isFile());
+		
+		if(key != null) {
+			try {
+				fiscDel.deleteFile(key, 2);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		sw.stop("dbis-thure post and delete", logger);		
+	}
+	
 	private void postAndDelete(File testFile) {
 		String key = null;
 		try {
@@ -111,13 +167,17 @@ public class FimgStorePostClientTest {
 	}
 
 	public static void main(String[] args) throws Exception {
-		fiscPo = new FimgStorePostClient(Scheme.https, "dbis-thure.uibk.ac.at", "fimagestoreTrp", args[0], args[1]);
-		fiscDel = new FimgStoreDelClient(Scheme.https, "dbis-thure.uibk.ac.at", "fimagestoreTrp", args[0], args[1]);
-		getter = new FimgStoreGetClient(Scheme.https, "dbis-thure.uibk.ac.at", 443, "fimagestoreTrp");
+		fiscPo = new FimgStorePostClient(Scheme.https, "files-test.transkribus.eu", "/", args[0], args[1]);
+		fiscDel = new FimgStoreDelClient(Scheme.https, "files-test.transkribus.eu", "/", args[0], args[1]);
+		getter = new FimgStoreGetClient(Scheme.https, "files-test.transkribus.eu", 443, "/");
 		
-		testPostWithTimeout();
+//		testPostWithTimeout();
 //		testOther();
-		testUploadEncoding(); //fimagestore issue #3
+//		testUploadEncoding(); //fimagestore issue #3
+		testPostFileOperationCopy();
+		
+		//the filestore will need write permission on the file!!! otherwise prepare for failure
+//		testPostFileOperationMove();
 	}
 
 }

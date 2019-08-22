@@ -1,6 +1,7 @@
 package org.dea.fimgstoreclient.utils;
 
 import java.awt.Point;
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.dea.fimagestore.core.FImagestoreConst;
+import org.dea.fimagestore.core.beans.FileOperation;
 import org.dea.fimagestore.core.util.FilekeyUtils;
 import org.dea.fimgstoreclient.beans.ImgType;
 import org.slf4j.Logger;
@@ -306,6 +308,34 @@ public class FimgStoreUriBuilder {
 		} catch(URISyntaxException e){
 			throw new IllegalStateException("Could not build URI due to configuration issues.", e);
 		}
+		return uri;
+	}
+	
+	public URI getPostFileOpUri(File file, FileOperation operation, String isPartOf,
+			Integer timeoutMinutes) {
+		URIBuilder uriBuilder = getUriBuilder(putActionPath);
+		if(file != null) {
+			uriBuilder.setParameter(FImagestoreConst.FILE_PATH_FIELD_NAME, file.getAbsolutePath());
+		}
+		if(operation != null) {
+			uriBuilder.setParameter(FImagestoreConst.FILE_OPERATION_FIELD_NAME, "" + operation);
+		}
+		
+		if (isPartOf != null && !isPartOf.isEmpty()) {
+			uriBuilder.setParameter(FImagestoreConst.IS_PART_OF_FIELD_NAME, isPartOf);
+		}
+		
+		if (timeoutMinutes != null && timeoutMinutes > 0) {
+			uriBuilder.setParameter(FImagestoreConst.TIMEOUT_FIELD_NAME, "" + timeoutMinutes);
+		}
+		
+		URI uri;
+		try {
+			uri = uriBuilder.build();
+		} catch(URISyntaxException e){
+			throw new IllegalArgumentException("Fimagestore create URL could not be build: "+e.getMessage(), e);
+		}		
+		
 		return uri;
 	}
 

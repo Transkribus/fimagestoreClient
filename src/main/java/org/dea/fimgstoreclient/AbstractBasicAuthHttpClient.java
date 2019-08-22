@@ -1,6 +1,7 @@
 package org.dea.fimgstoreclient;
 
 import java.io.IOException;
+import java.net.URI;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -47,6 +48,12 @@ public abstract class AbstractBasicAuthHttpClient extends AbstractHttpClient {
 	protected String post(HttpEntity entity, ResponseHandler<String> responseHandler) throws IOException, AuthenticationException {
 		hasCreds(host, port);		
 		return super.post(entity, responseHandler);
+	}
+	
+	@Override
+	protected String post(URI uri, HttpEntity entity, ResponseHandler<String> responseHandler) throws IOException, AuthenticationException {
+		hasCreds(host, port);		
+		return super.post(uri, entity, responseHandler);
 	}
 	
 	protected boolean hasCreds(String host, Integer port) {

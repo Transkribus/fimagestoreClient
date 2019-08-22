@@ -2,10 +2,12 @@ package org.dea.fimgstoreclient;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -14,6 +16,7 @@ import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.dea.fimagestore.core.FImagestoreConst;
+import org.dea.fimagestore.core.beans.FileOperation;
 import org.dea.fimagestore.core.client.IFImagestoreConfig;
 import org.dea.fimagestore.core.util.MimeTypes;
 import org.dea.fimgstoreclient.responsehandler.FimgStoreUploadResponseHandler;
@@ -104,46 +107,65 @@ public class FimgStorePostClient extends AbstractBasicAuthHttpClient implements 
 		return postContent(fileBody, isPartOf, null, nrOfRetries, timeoutMinutes);
 	}
 	
-	public String replaceFile(final String key, File ulFile, String isPartOf, int nrOfRetries) throws IOException, AuthenticationException {
-		if (!ulFile.canRead()) {
-			throw new IOException("UploadFile " + ulFile.getAbsoluteFile() + " is not readable.");
-		}
-		if (key == null){
-			throw new IOException("fileKey is NULL.");
-		}
-		ContentType contentType = getContentType(ulFile.getName());
-
-		// build content:
-		final FileBody fileBody = new FileBody(ulFile, contentType, ulFile.getName());
-
-		//post and return key
-		return postContent(fileBody, isPartOf, key, nrOfRetries, null);
+	/**
+	 * EXPERIMENTAL 
+	 * @see #storeLocalFile(File, FileOperation, String, Integer)
+	 * 
+	 * @param file
+	 * @param isPartOf
+	 * @param timeoutMinutes
+	 * @return
+	 * @throws IOException
+	 * @throws AuthenticationException
+	 */
+	public String storeLocalFileByCopy(File file, final String isPartOf, final Integer timeoutMinutes) throws IOException, AuthenticationException {
+		return storeLocalFile(file, FileOperation.copy, isPartOf, timeoutMinutes);
+	}
+	/**
+	 * EXPERIMENTAL 
+	 * @see #storeLocalFile(File, FileOperation, String, Integer)
+	 * 
+	 * @param file
+	 * @param isPartOf
+	 * @param timeoutMinutes
+	 * @return
+	 * @throws IOException
+	 * @throws AuthenticationException
+	 */
+	public String storeLocalFileByMove(File file, final String isPartOf, final Integer timeoutMinutes) throws IOException, AuthenticationException {
+		return storeLocalFile(file, FileOperation.move, isPartOf, timeoutMinutes);
 	}
 	
 	/**
-	 * Replace a file at the image store and get the retrieval key
-	 * @param key the key of the file to be replaced
-	 * @param data raw bytes to be posted
-	 * @param fileName the original file's name
-	 * @param isPartOf the collection name on the fimagestore
-	 * @param nrOfRetries nr of times to retry if failure
-	 * @return the key of the newly created object
-	 * @throws IOException if network error occurs
-	 * @throws AuthenticationException if authentication fails
+	 * Let the FImagestore copy or move a File from a local filesystem into its storeLocation.
+	 * 
+	 * Be careful with move operations!! Filestore will need write permission on the file or will fail!!
+	 * 
+	 * @param file
+	 * @param operation {@link FileOperation}
+	 * @param isPartOf
+	 * @param nrOfRetries
+	 * @param timeoutMinutes
+	 * @return
+	 * @throws IOException
+	 * @throws AuthenticationException 
 	 */
-	public String replaceFile(final String key, byte[] data, final String fileName, final String isPartOf, final int nrOfRetries) throws IOException {
-
-		if (data == null) {
-			throw new IOException("Data is NULL.");
-		} 
-		if (key == null){
-			throw new IOException("fileKey is NULL.");
+	private String storeLocalFile(File file, FileOperation operation, final String isPartOf, final Integer timeoutMinutes) throws IOException, AuthenticationException {
+		if(file == null) {
+			//do not check file existence. Path may refer to fimagestore server setup!
+			throw new IllegalArgumentException("File argument is null.");
 		}
-
-		final ContentType contentType = getContentType(fileName);
-		final ByteArrayBody fileBody = new ByteArrayBody(data, contentType, fileName);
-		//post and return key
-		return postContent(fileBody, isPartOf, key, nrOfRetries, null);
+		if(operation == null) {
+			operation = FileOperation.copy;
+		}
+		
+		// post stuff and get the file key
+		ResponseHandler<String> responseHandler = new FimgStoreUploadResponseHandler();
+		URI uri = getUriBuilder().getPostFileOpUri(null, operation, isPartOf, timeoutMinutes);
+		EntityBuilder entBuilder = EntityBuilder.create();
+		entBuilder.setText(file.getAbsolutePath());
+		//post a null entity, everything contained in uri
+		return super.post(uri, entBuilder.build(), responseHandler);
 	}
 	
 	private String postContent(ContentBody body, final String isPartOf, final String key, int nrOfRetries, Integer timeoutMinutes) throws IOException {

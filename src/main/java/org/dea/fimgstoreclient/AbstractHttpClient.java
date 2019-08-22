@@ -190,13 +190,18 @@ public abstract class AbstractHttpClient implements IFimgStoreClientBase, AutoCl
 	 */
 	protected String post(HttpEntity entity, ResponseHandler<String> responseHandler) throws IOException, AuthenticationException {
 		URI uri = getUriBuilder().getBasePutUri();
-
+		return this.post(uri, entity, responseHandler);
+	}
+	
+	protected String post(URI uri, HttpEntity entity, ResponseHandler<String> responseHandler) throws IOException, AuthenticationException {
 		HttpPost httpPost = new HttpPost(uri);
 		
 		logger.debug("POST: " + uri.toString());
 		
-		// send and get response:
-		httpPost.setEntity(entity);
+		if(entity != null) {
+			// send and get response:
+			httpPost.setEntity(entity);
+		}
 		
 		CloseableHttpClient httpClient = getHttpClient();
 		final String result = httpClient.execute(httpPost, responseHandler, context);
