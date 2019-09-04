@@ -52,7 +52,7 @@ public abstract class AbstractHttpClient implements IFimgStoreClientBase, AutoCl
 	 * If set to false, each request will be executed using a new CloseableHttpClient instance as it was since v0.1, if true one instance will be reused.<br> 
 	 * Current docs for apache http client say that reuse is better. So this is here for doing a comparison test.
 	 */
-	private boolean REUSE_HTTP_CLIENT_INSTANCE = false;
+	private boolean REUSE_HTTP_CLIENT_INSTANCE = true;
 	
 	protected AbstractHttpClient(final String host, final String serverContext) {
 		this(Scheme.https, host, null, serverContext);
